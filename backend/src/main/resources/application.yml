@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  datasource:
+    url:  jdbc:postgresql://localhost:5432/hackaton
+    username: postgres
+    password: postgrespassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/hackaton
+    user: postgres
+    password: postgrespassword
+    driver-class-name: org.postgresql.Driver
+
