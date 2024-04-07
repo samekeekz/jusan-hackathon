@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +33,15 @@ public class User implements UserDetails {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private ImageData imageData;
+
+    @OneToMany(mappedBy = "card")
+    List<Card> cards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "santa")
+    List<Santa> santas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "santa")
+    List<Santa> receivers = new ArrayList<>();
 
     @Override
     public String getUsername() {
