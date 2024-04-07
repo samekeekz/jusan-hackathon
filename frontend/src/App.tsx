@@ -1,7 +1,9 @@
+import Register from "./components/Authorization/Registration/Register"
+
 function App() {
   return (
-    <div>
-      <h1>App</h1>
+    <div className="flex justify-center items-center w-full h-screen bg-slate-200">
+      <Register />
     </div >
   )
 }
