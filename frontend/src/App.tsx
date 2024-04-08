@@ -1,11 +1,17 @@
+import { Route, Routes } from "react-router-dom"
+import Layout from "./components/Layout/Layout"
+import Login from "./components/Authorization/Login/Login"
 import Register from "./components/Authorization/Registration/Register"
 
 function App() {
   return (
-    <div className="flex justify-center items-center w-full h-screen bg-slate-200">
-      <Register />
-    </div >
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="signup" element={<Register />} />
+        <Route path="login" element={<Login />} />
+      </Route>
+    </Routes>
   )
 }
 
-export default App
+export default App;

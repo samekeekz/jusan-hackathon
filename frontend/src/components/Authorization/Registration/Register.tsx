@@ -1,17 +1,78 @@
+import { SubmitHandler, useForm } from "react-hook-form";
 import Button from "../../ui/Button/Button"
-import Input from "../../ui/Input/Input"
+import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "react-router-dom";
+
+const schema = z.object({
+  name: z.string().trim().min(2, { message: "Это поле обязательно" }),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "Это поле обязательно" })
+    .email({ message: "Неправильная почта" }),
+  password: z.string().min(6, { message: "Пароль должен быть не менее 6 символов" }),
+});
+
+type SchemaType = z.infer<typeof schema>;
+
+
 const Register = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SchemaType>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit: SubmitHandler<SchemaType> = async (data: SchemaType) => {
+    console.log(data);
+
+  }
 
   return (
-    <div className="bg-white flex flex-col items-center w-[850px] h-[760px] py-[52px] px-[90px]">
+    <div className="bg-white flex flex-col items-center w-[850px] py-[52px] px-[90px] rounded-[20px]">
       <h1 className="font-bold text-[38px] text-[#333333] mb-12">Регистрация</h1>
-      <form>
-        <Input id="name" label="Ваше Имя" />
-        <label htmlFor="email" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваш E-mail</label>
-        <input type="text" id="email" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl mb-10" />
-        <Button className="mb-[10px]">Зарегистрироваться</Button>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col">
+        <div className="mb-10">
+          <div className="flex justify-between items-center mb-[3px]">
+            <label htmlFor="name" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваше Имя</label>
+            {errors.name && (
+              <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+          <input {...register("name")} type="text" id="name" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl" />
+        </div>
+        <div className="mb-10">
+          <div className="flex justify-between items-center">
+            <label htmlFor="email" className="ml-[2px] text-[#333333] text-2xl text-left self-start mb-[3px]">Ваш E-mail</label>
+            {errors.email && (
+              <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+          <input {...register("email")}
+            type="text" id="email" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl" />
+        </div>
+        <div className="mb-10">
+          <div className="flex justify-between items-center">
+            <label htmlFor="password" className="ml-[2px] text-[#333333] text-2xl text-left self-start mb-[3px]">Ваш Пароль</label>
+            {errors.password && (
+              <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+          <input {...register("password")}
+            type="password" id="password" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl appearance-none" />
+        </div>
+        <Button className="mb-[10px] self-center">Зарегистрироваться</Button>
       </form>
-      <p className="text-[14px] text-[#979797] leading-8">Уже есть аккаунт? <span className="font-bold capitalize underline">Войти</span></p>
+      <Link to="/" className="text-[#979797] leading-8 cursor-pointer">Уже есть аккаунт? <span className="font-bold capitalize underline">Войти</span></Link>
     </div>
   )
 }
