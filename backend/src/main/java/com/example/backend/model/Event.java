@@ -29,9 +29,9 @@ public class Event {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "event")
     private List<Card> cards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "santa")
+    @OneToMany(mappedBy = "event")
     private List<Santa> santaList = new ArrayList<>();
 }

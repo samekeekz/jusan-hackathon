@@ -34,13 +34,13 @@ public class User implements UserDetails {
     @JoinColumn(name = "image_id")
     private ImageData imageData;
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "owner")
     List<Card> cards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "santa")
+    @OneToMany(mappedBy = "santaUser")
     List<Santa> santas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "santa")
+    @OneToMany(mappedBy = "receiverUser")
     List<Santa> receivers = new ArrayList<>();
 
     @Override

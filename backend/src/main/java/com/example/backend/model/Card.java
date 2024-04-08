@@ -25,10 +25,11 @@ public class Card {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @OneToMany(mappedBy = "gift")
+    @OneToMany(mappedBy = "card")
     private List<Gift> gifts = new ArrayList<>();
 }
