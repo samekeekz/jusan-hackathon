@@ -1,11 +1,12 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Button from "../../ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../../context/AuthProvider";
 
 const schema = z.object({
-  name: z.string().trim().min(2, { message: "Это поле обязательно" }),
   email: z
     .string()
     .trim()
@@ -18,6 +19,8 @@ type SchemaType = z.infer<typeof schema>;
 
 
 const Register = () => {
+  const { handleSignUp } = useContext(AuthContext);
+
   const {
     register,
     handleSubmit,
@@ -26,26 +29,11 @@ const Register = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<SchemaType> = async (data: SchemaType) => {
-    console.log(data);
-
-  }
 
   return (
     <div className="bg-white flex flex-col items-center w-[850px] py-[52px] px-[90px] rounded-[20px]">
       <h1 className="font-bold text-[38px] text-[#333333] mb-12">Регистрация</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col">
-        <div className="mb-10">
-          <div className="flex justify-between items-center mb-[3px]">
-            <label htmlFor="name" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваше Имя</label>
-            {errors.name && (
-              <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
-                {errors.name.message}
-              </p>
-            )}
-          </div>
-          <input {...register("name")} type="text" id="name" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl" />
-        </div>
+      <form onSubmit={handleSubmit(handleSignUp)} className="w-full flex flex-col">
         <div className="mb-10">
           <div className="flex justify-between items-center">
             <label htmlFor="email" className="ml-[2px] text-[#333333] text-2xl text-left self-start mb-[3px]">Ваш E-mail</label>
