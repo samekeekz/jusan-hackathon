@@ -32,7 +32,7 @@ const Register = () => {
   }
 
   return (
-    <div className="bg-white flex flex-col items-center w-[850px] py-[52px] px-[90px] rounded-[20px]">
+    <div className="flex flex-col items-center">
       <h1 className="font-bold text-[38px] text-[#333333] mb-12">Регистрация</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col">
         <div className="mb-10">
