@@ -41,7 +41,6 @@ public class UserController {
        userService.uploadUserImage(file ,authentication);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
     @Transactional
     @GetMapping("/image")
     public ResponseEntity<?> downloadImage(Authentication authentication){
@@ -52,7 +51,7 @@ public class UserController {
     }
 
     @PutMapping("/update/general")
-    public ResponseEntity<UserDto> updateUserInfo(UserDto updateUser, Authentication authentication){
+    public ResponseEntity<UserDto> updateUserInfo(@RequestBody UserDto updateUser, Authentication authentication){
         return  ResponseEntity.ok().body(userService.updateGeneralData(updateUser, authentication));
     }
     @PutMapping("/update/password")

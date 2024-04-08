@@ -1,14 +1,13 @@
 package com.example.backend.repository;
 
+import com.example.backend.model.Event;
 import com.example.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
+import java.util.List;
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByEmail(String email);
-    Optional<User> findById(long id);
+public interface EventRepository extends JpaRepository<Event, String> {
 
+    List<Event> findEventsByOwner(User user);
 }

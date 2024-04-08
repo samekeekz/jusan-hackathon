@@ -72,12 +72,13 @@ public class UserService {
 
     public UserDto updateGeneralData(UserDto updateUser, Authentication authentication) {
         User user = getUser(authentication);
+//        User user = userRepository.findUserByEmail(updateUser.getEmail());
         user.setFullName(updateUser.getFullName());
         user.setEmail(updateUser.getEmail());
 
         userRepository.save(user);
 
-        return new UserDto(user);
+        return new UserDto(updateUser.getFullName(), updateUser.getEmail(), updateUser.getImageId());
     }
 
     public UserDto updatePassword(String newPassword, Authentication authentication) {

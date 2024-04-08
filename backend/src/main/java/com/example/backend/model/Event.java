@@ -24,6 +24,8 @@ public class Event {
     private String name;
     @CreationTimestamp
     private LocalDateTime createdAt;
+    private Boolean isLimitSet;
+    private int price;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
