@@ -1,18 +1,25 @@
-type Token = {
-    token: string;
-    tokenExpiration: number;
+type JWTService = {
+    getToken: () => string | null;
+    setToken: (token: string) => void;
+    deleteToken: () => void;
 };
 
-const inMemoryJWTService = () => {
-    let inMemoryJWT: Token | null = null;
+const inMemoryJWTService = (): JWTService => {
+    let inMemoryJWT: string | null = null;
 
-    const getToken = () => inMemoryJWT;
+    const getToken = (): string | null => inMemoryJWT;
 
-    const setToken = (token: string, tokenExpiration: number) => {
-        inMemoryJWT = { token, tokenExpiration };
+    const setToken = (token: string): void => {
+        inMemoryJWT = token
     };
 
-    return { getToken, setToken };
+    const deleteToken = (): void => {
+        inMemoryJWT = null;
+        localStorage.setItem(import.meta.env.VITE_LOGOUT_STORAGE_KEY, Date.now().toString());
+
+    }
+
+    return { getToken, setToken, deleteToken };
 }
 
-export default inMemoryJWTService;
+export default inMemoryJWTService();
