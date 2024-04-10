@@ -73,7 +73,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     const handleSignIn = (data: SignUpType) => {
-        AuthClient.post("/auth/login", data)
+        AuthClient.post("/auth/authenticate", data)
             .then((res: { data: ResponseDataType }) => {
                 const { token } = res.data;
 
@@ -112,8 +112,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     return (
         <AuthContext.Provider
             value={{
-                handleSignUp: async (data: SignUpType) => ({ message: "" }),
-                handleSignIn: async (data: SignUpType) => ({ message: "" }),
+                handleSignUp,
+                handleSignIn,
                 handleLogOut,
                 isUserloggedIn
             }}

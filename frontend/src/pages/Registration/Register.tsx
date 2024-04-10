@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
-import Button from "../../ui/Button/Button"
+import Button from "@/components/ui/Button/Button";
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
-import { AuthContext } from "../../../context/AuthProvider";
 import { useSnackbar } from "notistack";
+import { AuthContext } from "@/context/AuthProvider";
 
 const schema = z.object({
   email: z
