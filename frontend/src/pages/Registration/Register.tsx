@@ -3,9 +3,9 @@ import Button from "@/components/ui/Button/Button";
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useSnackbar } from "notistack";
-import { AuthContext } from "@/context/AuthProvider";
+import useAuth from "@/hooks/useAuth";
 
 const schema = z.object({
   email: z
@@ -20,7 +20,7 @@ export type SignUpType = z.infer<typeof schema>;
 
 
 const Register = () => {
-  const { handleSignUp } = useContext(AuthContext);
+  const { handleSignUp } = useAuth();
   const [error, setError] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar()
 

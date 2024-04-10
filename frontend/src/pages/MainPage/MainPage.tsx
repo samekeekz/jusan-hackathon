@@ -1,7 +1,10 @@
 import Santa from "@/assets/icons/Rectangle 586.svg"
 import Button from "@/components/ui/Button/Button"
+import useAuth from "@/hooks/useAuth"
 import { Link } from "react-router-dom"
 const MainPage = () => {
+    const { isUserloggedIn } = useAuth();
+
     return (
         <div className="flex h-full max-w-[83rem] justify-between mx-auto items-center">
             <div className="flex flex-col gap-[120px]">
@@ -11,10 +14,10 @@ const MainPage = () => {
                 </div>
                 <div className="flex gap-10 items-center">
                     <Button className="px-9 py-[6px] text-[22px] text-[#F3F4F6] leading-9">
-                        <Link to="/signup">Создать игру</Link>
+                        <Link to={isUserloggedIn ? "/createGame" : "/signup"}>Создать игру</Link>
                     </Button>
                     <Button className="bg-white border-[1px] border-solid font-normal px-9 py-[6px] text-[22px] leading-9 text-[#333333] border-[#FF6300]">
-                        <Link to="/signup">Жеребьевка</Link>
+                        <Link to={isUserloggedIn ? "/shuffle" : "/signup"}>Жеребьевка</Link>
                     </Button>
                 </div>
             </div>

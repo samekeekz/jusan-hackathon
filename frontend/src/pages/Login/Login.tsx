@@ -3,8 +3,9 @@ import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { } from "react";
 import { AuthContext } from "@/context/AuthProvider";
+import useAuth from "@/hooks/useAuth";
 
 const schema = z.object({
     email: z
@@ -19,7 +20,7 @@ type SchemaType = z.infer<typeof schema>;
 
 
 const Login = () => {
-    const { handleSignIn } = useContext(AuthContext);
+    const { handleSignIn } = useAuth();
     const {
         register,
         handleSubmit,

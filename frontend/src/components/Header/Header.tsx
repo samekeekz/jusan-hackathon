@@ -1,10 +1,9 @@
-import { useContext } from 'react';
 import envelope from '../../assets/icons/envelope.svg';
 import { Link } from 'react-router-dom'
-import { AuthContext } from '@/context/AuthProvider';
+import useAuth from '@/hooks/useAuth';
 
 export default function Header() {
-  const { isUserloggedIn } = useContext(AuthContext);
+  const { isUserloggedIn } = useAuth();
 
   return (
     <header className="h-[5rem] bg-[#ffff] relative mb-[7.5rem]">

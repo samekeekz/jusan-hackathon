@@ -29,7 +29,7 @@ AuthClient.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-type AuthContextType = {
+export type AuthContextType = {
     handleSignUp: (data: SignUpType) => Promise<{ message: string }>;
     handleSignIn: (data: SignUpType) => Promise<{ message: string }>;
     handleLogOut: () => void;

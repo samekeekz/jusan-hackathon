@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext, useEffect } from "react";
-import { AuthClient, AuthContext } from "@/context/AuthProvider";
+import { useEffect } from "react";
+import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
 
 

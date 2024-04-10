@@ -1,19 +1,15 @@
-import { AuthContext } from "@/context/AuthProvider";
-import { PropsWithChildren, useContext, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+// import React, { PropsWithChildren, useContext } from "react";
+// import { Route, Navigate } from "react-router-dom";
+// import { AuthContext } from "@/context/AuthProvider";
 
-const ProtectedRoute = ({ children }: PropsWithChildren) => {
-    const { isUserloggedIn } = useContext(AuthContext);
-    const navigate = useNavigate();
+// const ProtectedRoute = () => {
+//     const { isUserloggedIn } = useContext(AuthContext);
 
+//     if (!isUserloggedIn) {
+//         return <Navigate to="/login" replace = { true} />;
+//     }
 
-    useEffect(() => {
-        if (!isUserloggedIn) {
-            navigate("/login", { replace: true });
-        }
-    }, [navigate, isUserloggedIn])
+//     return <Outlet/>;
+// };
 
-    return children
-};
-
-export default ProtectedRoute;
+// export default ProtectedRoute;
