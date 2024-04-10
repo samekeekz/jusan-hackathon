@@ -82,6 +82,7 @@ const PasswordRecovery = () => {
                                     <Button className="mb-4 self-center px-20" disabled={loading}>Восстановить</Button>
                                 )
                             }
+
                         </form>
                     </>
                 ) : (

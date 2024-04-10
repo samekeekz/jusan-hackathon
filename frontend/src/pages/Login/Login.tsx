@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { } from "react";
-import { AuthContext } from "@/context/AuthProvider";
 import useAuth from "@/hooks/useAuth";
 
 const schema = z.object({

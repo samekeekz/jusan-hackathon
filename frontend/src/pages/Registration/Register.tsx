@@ -24,10 +24,6 @@ const Register = () => {
   const [error, setError] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar()
 
-  const handleOnClick = () => {
-    enqueueSnackbar("Hello, world!", { variant: 'error' })
-  }
-
   const onHandleSubmit = async (data: SignUpType) => {
     try {
       const { message } = await handleSignUp(data);
@@ -71,7 +67,7 @@ const Register = () => {
         </div>
         <div className="mb-10">
           <div className="flex justify-between items-center">
-            <label onClick={handleOnClick} htmlFor="password" className="ml-[2px] text-[#333333] text-2xl text-left self-start mb-[3px]">Ваш Пароль</label>
+            <label htmlFor="password" className="ml-[2px] text-[#333333] text-2xl text-left self-start mb-[3px]">Ваш Пароль</label>
             {errors.password && (
               <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
                 {errors.password.message}
