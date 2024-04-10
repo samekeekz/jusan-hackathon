@@ -1,3 +1,4 @@
+import { cn } from "@/utils/mergeStyles";
 import { ReactNode, CSSProperties, ButtonHTMLAttributes } from "react";
 
 interface ButtonProps {
@@ -10,7 +11,7 @@ interface ButtonProps {
 const Button = ({ children, onClick, className, style, ...props }: ButtonProps & ButtonHTMLAttributes<HTMLButtonElement>) => {
     return (
         <button
-            className={`py-5 px-[60px] bg-[#FF6300] font-bold text-xl text-white border-none rounded-[20px] ${className}`}
+            className={cn(`py-5 px-[60px] bg-[#FF6300] font-bold text-xl text-white border-none rounded-[20px] ${className}`)}
             onClick={onClick}
             style={style}
             {...props}

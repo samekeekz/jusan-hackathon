@@ -5,16 +5,9 @@ import Login from "./pages/Login/Login";
 import PasswordRecovery from "./pages/PasswordRecovery/PasswordRecovery";
 import { AuthContext } from "./context/AuthProvider";
 import { useContext } from "react";
-
-function ProtectedRoute({ element, ...props }) {
-  const { isUserloggedIn } = useContext(AuthContext);
-
-  return isUserloggedIn ? (
-    <Route {...props} element={element} />
-  ) : (
-    <Navigate to="/login" replace />
-  );
-}
+import MainPage from "./pages/MainPage/MainPage";
+import MyCabinet from "./pages/MyCabinet/MyCabinet";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
   const { isUserloggedIn } = useContext(AuthContext);
@@ -23,9 +16,11 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
+        <Route index element={<MainPage />} />
         <Route path="signup" element={<Register />} />
         <Route path="login" element={<Login />} />
         <Route path="recoverPassword" element={<PasswordRecovery />} />
+        <Route path="myaccount" element={<MyCabinet />} />
       </Route>
     </Routes>
   )

@@ -49,7 +49,7 @@ const Register = () => {
 
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
       <h1 className="font-bold text-[38px] text-[#333333] mb-12">Регистрация</h1>
       <form onSubmit={handleSubmit(onHandleSubmit)} className="w-full flex flex-col">
         <div className="mb-10">

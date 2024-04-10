@@ -1,9 +1,14 @@
 import { createContext, useState, ReactNode, useEffect } from "react";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { enqueueSnackbar } from "notistack";
-import { SignUpType } from "../components/Authorization/Registration/Register";
+import { SignUpType } from "@/pages/Registration/Register";
 import { ResponseDataType } from "../types";
-import inMemoryJWTService from "../services/inMemoryJWT";
+import { setCookie, destroyCookie, parseCookies } from "nookies"; // Import nookies for cookie management
+
+export const getCookie = (key: string) => {
+    const cookies = parseCookies();
+    return cookies[key];
+};
 
 export const AuthClient: AxiosInstance = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}`,
@@ -11,14 +16,15 @@ export const AuthClient: AxiosInstance = axios.create({
 });
 
 AuthClient.interceptors.request.use((config) => {
-    const token = inMemoryJWTService.getToken();
+    const token = getCookie("jwtToken"); // Retrieve token from cookie
 
     if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
     }
 
-    return config;
+    console.log("Request config:", config.headers["Authorization"]);
 
+    return config;
 }, (error: AxiosError) => {
     return Promise.reject(error);
 });
@@ -45,16 +51,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isUserloggedIn, setIsUserLoggedIn] = useState<boolean>(false);
 
     const handleLogOut = () => {
-        inMemoryJWTService.deleteToken();
+        destroyCookie(null, "jwtToken"); // Remove token from cookie
         setIsUserLoggedIn(false);
     };
 
-    const handleSignUp = (data: SignUpType) => {
-        AuthClient.post("/auth/register", data)
+    const handleSignUp = async (data: SignUpType) => {
+        return AuthClient.post("/auth/register", data)
             .then((res: { data: ResponseDataType }) => {
                 const { token } = res.data;
 
-                inMemoryJWTService.setToken(token);
+                setCookie(null, "jwtToken", token, { path: "/" }); // Store token in cookie
                 console.log(res.data);
 
                 return enqueueSnackbar("Вы успешно зарегистрировались", { variant: "success" });
@@ -72,12 +78,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             });
     };
 
-    const handleSignIn = (data: SignUpType) => {
-        AuthClient.post("/auth/authenticate", data)
+    const handleSignIn = async (data: SignUpType) => {
+        return AuthClient.post("/auth/authenticate", data)
             .then((res: { data: ResponseDataType }) => {
                 const { token } = res.data;
 
-                inMemoryJWTService.setToken(token);
+                setCookie(null, "jwtToken", token, { path: "/" }); // Store token in cookie
                 console.log(res.data);
                 setIsUserLoggedIn(true);
                 return enqueueSnackbar("Вы успешно залогинились", { variant: "success" });
@@ -94,10 +100,23 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             });
     };
 
+    const handleSaveAccountDetails = async (data: { name: string, email: string }) => {
+        return AuthClient.post("/users/update/general", data)
+            .then((res: { data: { name: string, email: string } }) => {
+                return res.data;
+            })
+            .catch((error) => {
+                if (error.response && error.response.data) {
+                    enqueueSnackbar(error.response.data as string, { variant: "error" });
+                }
+                enqueueSnackbar("Что-то пошло не так", { variant: "error" });
+            });
+    }
+
     useEffect(() => {
         const handlePersistedLogOut = (event: StorageEvent) => {
             if (event.key === import.meta.env.VITE_LOGOUT_STORAGE_KEY) {
-                inMemoryJWTService.deleteToken();
+                destroyCookie(null, "jwtToken"); // Remove token from cookie
                 setIsUserLoggedIn(false);
             }
         };
@@ -115,6 +134,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 handleSignUp,
                 handleSignIn,
                 handleLogOut,
+                handleSaveAccountDetails,
                 isUserloggedIn
             }}
         >

@@ -2,11 +2,11 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useState } from "react";
 import Santa from '@/assets/icons/messageSentSanta.svg';
 import { ThreeDots } from "react-loader-spinner";
 import { Link } from "react-router-dom";
+import { AuthClient } from "@/context/AuthProvider";
 const schema = z.object({
     email: z
         .string()
@@ -33,7 +33,7 @@ const PasswordRecovery = () => {
     const onSubmit: SubmitHandler<SchemaType> = async (data: SchemaType) => {
         setLoading(true);
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/password-recovery`, {
+            const response = await AuthClient.post(`/auth/password-recovery`, {
                 email: data.email
             },
                 {
@@ -56,7 +56,7 @@ const PasswordRecovery = () => {
 
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
             {
                 !messageSent ? (
                     <>
@@ -74,7 +74,7 @@ const PasswordRecovery = () => {
                                 <input {...register("email")}
                                     type="text" id="email" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl" />
                             </div>
-                            <p className="text-center text-[#979797] leading-8 cursor-pointer mb-36">Мы отправим ссылку с временным паролем на Вашу почту</p>
+                            <p className="text-center text-[#979797] leading-8 cursor-pointer mb-20">Мы отправим ссылку с временным паролем на Вашу почту</p>
                             {
                                 loading ? (
                                     <Button className="mb-4 self-center py-0 px-[97px]"><ThreeDots color="#ffffff" width={60} height={68} /></Button>

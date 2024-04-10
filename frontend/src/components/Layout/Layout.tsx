@@ -1,14 +1,12 @@
 import { Outlet } from 'react-router-dom'
-import Header from './Header.tsx'
+import Header from '../Header/Header.tsx'
 
 const Layout = () => {
     return (
         <>
             <Header />
-            <div>
-                <section className="bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
-                    <Outlet />
-                </section>
+            <div className='px-5'>
+                <Outlet />
             </div>
         </>
     )
