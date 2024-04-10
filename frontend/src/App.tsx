@@ -8,6 +8,7 @@ import MyCabinet from "./pages/MyCabinet/MyCabinet";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ErrorBoundary from "./pages/ErrorBoundary/ErrorBoundary";
 import useAuth from "./hooks/useAuth";
+import MyGames from "./pages/MyGames/MyGames";
 
 function App() {
   const { isUserloggedIn } = useAuth();
@@ -22,6 +23,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="recoverPassword" element={<PasswordRecovery />} />
           <Route path="myaccount" element={<MyCabinet />} />
+          <Route path="mygames" element={<MyGames isloggedIn={true}/>} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
