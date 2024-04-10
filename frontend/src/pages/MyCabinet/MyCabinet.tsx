@@ -5,10 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
-
+const MAX_FILE_SIZE = 10000000;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const schemaAccountDetails = z.object({
-    name: z
+    fullName: z
         .string()
         .trim()
         .min(1, { message: "Это поле обязательно" }),
@@ -17,6 +18,13 @@ const schemaAccountDetails = z.object({
         .trim()
         .min(1, { message: "Это поле обязательно" })
         .email({ message: "Неправильная почта" }),
+    image: z
+        .any()
+        .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+        .refine(
+            (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+            "Only .jpg, .jpeg, .png and .webp formats are supported."
+        )
 });
 
 const schemaPassword = z.object({
@@ -42,7 +50,7 @@ const MyCabinet = () => {
             try {
                 const response = await AuthClient.get("/users");
                 console.log(response.data);
-                form1.setValue("name", response.data.name);
+                form1.setValue("fullName", response.data.fullName);
                 form1.setValue("email", response.data.email);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -53,24 +61,70 @@ const MyCabinet = () => {
         fetchData();
     }, [])
 
+    const onSubmitAccountDetails = async (data: SchemaAccountDetailsType) => {
+        console.log(data);
+        const formData = new FormData();
+        formData.append('fullName', data.fullName);
+        formData.append('email', data.email);
+        formData.append('image', data.image[0]);
+        try {
+            const response = await AuthClient.put("/users/update/general", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log(response.data);
+            enqueueSnackbar("Данные успешно обновлены", { variant: "success" });
+        } catch (error) {
+            console.error("Error updating data:", error);
+            enqueueSnackbar("Ошибка при обновлении данных", { variant: "error" });
+        }
+    }
+
+
+    const onSubmitPassword = async (data: SchemaPasswordType) => {
+        if (data.password !== data.password2) {
+            form2.setError("password2", {
+                type: "manual",
+                message: "Пароли не совпадают",
+            })
+
+            enqueueSnackbar("Пароли не совпадают", { variant: "error" });
+            return;
+        }
+
+        console.log(data.password);
+
+
+        try {
+            const response = await AuthClient.put("/users/update/password", data.password);
+            console.log(response.data);
+            console.log(data);
+            enqueueSnackbar("Пароль успешно обновлен", { variant: "success" });
+        } catch (error) {
+            console.error("Error updating password:", error);
+            enqueueSnackbar("Ошибка при обновлении пароля", { variant: "error" });
+        }
+    }
+
 
     return (
         <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
             <h1 className="font-bold text-[30px] text-[#333333] mb-11">Личные данные</h1>
-            <form className="w-full flex flex-col mb-24">
+            <form onSubmit={form1.handleSubmit(onSubmitAccountDetails)} className="w-full flex flex-col mb-24">
                 <div className="mb-10">
                     <div className="flex justify-between items-center mb-[3px]">
-                        <label htmlFor="name" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваше Имя</label>
-                        {form1.formState.errors.name && (
+                        <label htmlFor="fullName" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваше Имя</label>
+                        {form1.formState.errors.fullName && (
                             <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
-                                {form1.formState.errors.name.message}
+                                {form1.formState.errors.fullName.message}
                             </p>
                         )}
                     </div>
-                    <input {...form1.register("name")}
-                        type="text" id="name" placeholder="*Имя Фамилия*" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl" />
+                    <input {...form1.register("fullName")}
+                        type="text" id="fullName" placeholder="*Имя Фамилия*" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl" />
                 </div>
-                <div className="mb-2">
+                <div className="mb-10">
                     <div className="flex justify-between items-center mb-[3px]">
                         <label htmlFor="email" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваш E-mail</label>
                         {form1.formState.errors.email && (
@@ -83,24 +137,30 @@ const MyCabinet = () => {
                         placeholder="example@gmail.com"
                         type="email" id="email" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl appearance-none" />
                 </div>
-                <div className="mb-3 w-96">
+                <div className="mb-3 w-full self-stretch">
                     <label
                         htmlFor="formFile"
-                        className="mb-2 inline-block text-neutral-700 dark:text-neutral-200"
+                        className="ml-[2px] mb-2 block text-[#333333] text-2xl text-left self-start"
                     >
-                        Default file input example
+                        Загрузите аватарку
                     </label>
+                    {form1.formState.errors.fullName && (
+                        <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
+                            {form1.formState.errors.fullName.message}
+                        </p>
+                    )}
                     <input
+                        {...form1.register("image")}
                         className="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
                         type="file"
-                        id="formFile"
+                        id="image"
                     />
                 </div>
                 <button className="border-none bg-transparent text-[#979797] text-[20px] leading-[34px] mt-7">Сохранить</button>
             </form>
 
             <h1 className="font-bold text-[30px] text-[#333333] mb-11">Пароль</h1>
-            <form className="w-full flex flex-col mb-[100px]">
+            <form onSubmit={form2.handleSubmit(onSubmitPassword)} className="w-full flex flex-col mb-[100px]">
                 <div className="mb-10">
                     <div className="flex justify-between items-center mb-[3px]">
                         <label htmlFor="email" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Новый Пароль</label>

@@ -18,7 +18,7 @@ export const AuthClient: AxiosInstance = axios.create({
 AuthClient.interceptors.request.use((config) => {
     const token = getCookie("jwtToken"); // Retrieve token from cookie
 
-    if (token) {
+    if (token && !config.url?.startsWith("/auth")) {
         config.headers["Authorization"] = `Bearer ${token}`;
     }
 
@@ -49,6 +49,13 @@ interface AuthProviderProps {
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isUserloggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+
+    useEffect(() => {
+        const token = getCookie("jwtToken");
+        if (token) {
+            setIsUserLoggedIn(true);
+        }
+    }, []);
 
     const handleLogOut = () => {
         destroyCookie(null, "jwtToken"); // Remove token from cookie
@@ -86,7 +93,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 setCookie(null, "jwtToken", token, { path: "/" }); // Store token in cookie
                 console.log(res.data);
                 setIsUserLoggedIn(true);
-                return enqueueSnackbar("Вы успешно залогинились", { variant: "success" });
+                enqueueSnackbar("Вы успешно залогинились", { variant: "success" });
+                return { message: 'ok' }
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
@@ -119,6 +127,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 destroyCookie(null, "jwtToken"); // Remove token from cookie
                 setIsUserLoggedIn(false);
             }
+        };
+
+        const handleBeforeUnload = () => {
+            destroyCookie(null, "jwtToken"); // Remove token from cookie when tab or browser is closed
         };
 
         window.addEventListener("storage", handlePersistedLogOut);

@@ -32,7 +32,7 @@ export default function Header() {
                     <Link to='/login'>Уведомления</Link>
                   </li>
                   <li className='pl-[1.4375rem] border-[#FF6300]'>
-                    <Link to='/login'>Мой аккаунт</Link>
+                    <Link to='/myaccount'>Мой аккаунт</Link>
                   </li>
                 </>
               )

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { } from "react";
 import useAuth from "@/hooks/useAuth";
 
@@ -20,6 +20,8 @@ type SchemaType = z.infer<typeof schema>;
 
 const Login = () => {
     const { handleSignIn } = useAuth();
+    const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
@@ -28,10 +30,25 @@ const Login = () => {
         resolver: zodResolver(schema),
     });
 
+    const handleSignInHere = async (data: SchemaType) => {
+        try {
+            const response = await handleSignIn(data);
+            console.log("Response:", response);
+
+            if (response && response.message === 'ok') {
+                console.log("User logged in successfully")
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Error signing in:", error);
+        }
+    }
+
+
     return (
         <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
             <h1 className="font-bold text-[38px] text-[#333333] mb-12">Вход</h1>
-            <form onSubmit={handleSubmit(handleSignIn)} className="w-full flex flex-col">
+            <form onSubmit={handleSubmit(handleSignInHere)} className="w-full flex flex-col">
                 <div className="mb-10">
                     <div className="flex justify-between items-center mb-[3px]">
                         <label htmlFor="email" className="ml-[2px] text-[#333333] text-2xl text-left self-start">Ваш E-mail</label>
