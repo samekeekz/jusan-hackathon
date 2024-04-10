@@ -1,9 +1,14 @@
 import envelope from '../../assets/icons/envelope.svg';
 import { Link } from 'react-router-dom'
 import useAuth from '@/hooks/useAuth';
+import { useEffect } from 'react';
 
 export default function Header() {
   const { isUserloggedIn } = useAuth();
+
+  useEffect(() => {
+    console.log("isUserloggedIn", isUserloggedIn)
+  }, [isUserloggedIn])
 
   return (
     <header className="h-[5rem] bg-[#ffff] relative mb-[7.5rem]">

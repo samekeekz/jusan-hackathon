@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button/Button";
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSnackbar } from "notistack";
 import useAuth from "@/hooks/useAuth";
@@ -20,6 +20,7 @@ export type SignUpType = z.infer<typeof schema>;
 
 
 const Register = () => {
+  const navigate = useNavigate();
   const { handleSignUp } = useAuth();
   const [error, setError] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar()
@@ -29,7 +30,11 @@ const Register = () => {
       const { message } = await handleSignUp(data);
       if (message && message === 'Неверный пароль') {
         setError(message);
+        return;
       }
+
+      navigate("/login");
+
     } catch (error) {
       enqueueSnackbar("Что-то пошло не так", { variant: "error" });
     }

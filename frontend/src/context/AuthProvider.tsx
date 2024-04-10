@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { enqueueSnackbar } from "notistack";
 import { SignUpType } from "@/pages/Registration/Register";
 import { ResponseDataType } from "../types";
-import { setCookie, destroyCookie, parseCookies } from "nookies"; // Import nookies for cookie management
+import { setCookie, destroyCookie, parseCookies } from "nookies";
 
 export const getCookie = (key: string) => {
     const cookies = parseCookies();
@@ -33,6 +33,7 @@ export type AuthContextType = {
     handleSignUp: (data: SignUpType) => Promise<{ message: string }>;
     handleSignIn: (data: SignUpType) => Promise<{ message: string }>;
     handleLogOut: () => void;
+    handleDeleteAccount: () => void;
     isUserloggedIn: boolean;
 };
 
@@ -40,6 +41,7 @@ export const AuthContext = createContext<AuthContextType>({
     handleSignUp: async () => ({ message: "" }),
     handleSignIn: async () => ({ message: "" }),
     handleLogOut: async () => ({ message: "" }),
+    handleDeleteAccount: async () => ({ message: "" }),
     isUserloggedIn: false,
 });
 
@@ -53,7 +55,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
         const token = getCookie("jwtToken");
         if (token) {
+            console.log(1);
             setIsUserLoggedIn(true);
+        } else {
+            setIsUserLoggedIn(false);
         }
     }, []);
 
@@ -73,13 +78,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 return enqueueSnackbar("Вы успешно зарегистрировались", { variant: "success" });
             })
             .catch((error) => {
-                if (error.response && error.response.data) {
-                    const { message } = error.response.data;
-                    if (message === 'Неверный пароль') {
-                        return { message };
-                    }
-                    enqueueSnackbar(message, { variant: "error" });
-                }
                 enqueueSnackbar("Что-то пошло не так", { variant: "error" });
                 return Promise.reject(error);
             });
@@ -97,16 +95,23 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 return { message: 'ok' }
             })
             .catch((error) => {
-                if (error.response && error.response.data) {
-                    const { token } = error.response.data;
-                    if (token) {
-                        console.log("Token in error response:", token);
-                    }
-                    enqueueSnackbar(error.response.data as string, { variant: "error" });
-                }
+                console.log(error);
                 enqueueSnackbar("Что-то пошло не так", { variant: "error" });
             });
     };
+
+    const handleDeleteAccount = async () => {
+        try {
+            await AuthClient.delete("/users");
+            destroyCookie(null, "jwtToken"); // Remove token from cookie
+            setIsUserLoggedIn(false);
+            enqueueSnackbar("Your account has been deleted", { variant: "success" });
+        } catch (error) {
+            console.log(error);
+            enqueueSnackbar("Something went wrong", { variant: "error" });
+        }
+    };
+
 
 
     useEffect(() => {
@@ -134,6 +139,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 handleSignUp,
                 handleSignIn,
                 handleLogOut,
+                handleDeleteAccount,
                 isUserloggedIn
             }}
         >

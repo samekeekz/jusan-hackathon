@@ -37,7 +37,7 @@ const Login = () => {
 
             if (response && response.message === 'ok') {
                 console.log("User logged in successfully")
-                navigate("/");
+                navigate("/myaccount");
             }
         } catch (error) {
             console.error("Error signing in:", error);
