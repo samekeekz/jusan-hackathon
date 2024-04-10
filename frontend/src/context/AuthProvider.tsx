@@ -108,18 +108,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             });
     };
 
-    const handleSaveAccountDetails = async (data: { name: string, email: string }) => {
-        return AuthClient.post("/users/update/general", data)
-            .then((res: { data: { name: string, email: string } }) => {
-                return res.data;
-            })
-            .catch((error) => {
-                if (error.response && error.response.data) {
-                    enqueueSnackbar(error.response.data as string, { variant: "error" });
-                }
-                enqueueSnackbar("Что-то пошло не так", { variant: "error" });
-            });
-    }
 
     useEffect(() => {
         const handlePersistedLogOut = (event: StorageEvent) => {
@@ -146,7 +134,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 handleSignUp,
                 handleSignIn,
                 handleLogOut,
-                handleSaveAccountDetails,
                 isUserloggedIn
             }}
         >
