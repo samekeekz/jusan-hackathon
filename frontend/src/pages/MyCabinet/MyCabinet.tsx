@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
-import useAuth from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+const MAX_FILE_SIZE = 10000000;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const schemaAccountDetails = z.object({
     fullName: z
@@ -18,6 +18,13 @@ const schemaAccountDetails = z.object({
         .trim()
         .min(1, { message: "Это поле обязательно" })
         .email({ message: "Неправильная почта" }),
+    image: z
+        .any()
+        .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+        .refine(
+            (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+            "Only .jpg, .jpeg, .png and .webp formats are supported."
+        )
 });
 
 const schemaPassword = z.object({
@@ -29,18 +36,6 @@ type SchemaPasswordType = z.infer<typeof schemaPassword>;
 type SchemaAccountDetailsType = z.infer<typeof schemaAccountDetails>;
 
 const MyCabinet = () => {
-    const { isUserloggedIn, handleDeleteAccount } = useAuth();
-
-    const navigate = useNavigate();
-
-
-    useEffect(() => {
-        if (!isUserloggedIn) {
-            navigate("/login");
-        }
-
-    }, [isUserloggedIn, navigate])
-
     const form1 = useForm<SchemaAccountDetailsType>({
         resolver: zodResolver(schemaAccountDetails),
     });
@@ -48,6 +43,7 @@ const MyCabinet = () => {
     const form2 = useForm<SchemaPasswordType>({
         resolver: zodResolver(schemaPassword),
     });
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,17 +59,19 @@ const MyCabinet = () => {
         };
 
         fetchData();
-
-
     }, [])
 
     const onSubmitAccountDetails = async (data: SchemaAccountDetailsType) => {
+        console.log(data);
+        const formData = new FormData();
+        formData.append('fullName', data.fullName);
+        formData.append('email', data.email);
+        formData.append('image', data.image[0]);
         try {
-            const response = await AuthClient.put("/users/update/general", {
-                fullName: data.fullName,
-                email: data.email,
-                imageId: 1
-
+            const response = await AuthClient.put("/users/update/general", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
             console.log(response.data);
             enqueueSnackbar("Данные успешно обновлены", { variant: "success" });
@@ -99,9 +97,7 @@ const MyCabinet = () => {
 
 
         try {
-            const response = await AuthClient.put("/users/update/password", {
-                password: data.password
-            });
+            const response = await AuthClient.put("/users/update/password", data.password);
             console.log(response.data);
             console.log(data);
             enqueueSnackbar("Пароль успешно обновлен", { variant: "success" });
@@ -109,11 +105,6 @@ const MyCabinet = () => {
             console.error("Error updating password:", error);
             enqueueSnackbar("Ошибка при обновлении пароля", { variant: "error" });
         }
-    }
-
-    const handleOnClickDeteteAccount = () => {
-        handleDeleteAccount();
-        navigate("/", { replace: true });
     }
 
 
@@ -146,7 +137,7 @@ const MyCabinet = () => {
                         placeholder="example@gmail.com"
                         type="email" id="email" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl appearance-none" />
                 </div>
-                {/* <div className="mb-3 w-full self-stretch">
+                <div className="mb-3 w-full self-stretch">
                     <label
                         htmlFor="formFile"
                         className="ml-[2px] mb-2 block text-[#333333] text-2xl text-left self-start"
@@ -164,7 +155,7 @@ const MyCabinet = () => {
                         type="file"
                         id="image"
                     />
-                </div> */}
+                </div>
                 <button className="border-none bg-transparent text-[#979797] text-[20px] leading-[34px] mt-7">Сохранить</button>
             </form>
 
@@ -197,7 +188,7 @@ const MyCabinet = () => {
                 <button className="border-none bg-transparent text-[#979797] text-[20px] leading-[34px] mt-7">Сохранить</button>
             </form>
 
-            <Button onClick={handleOnClickDeteteAccount} className="bg-[#FF0000] font-normal text-[25px] px-[72px] py-4">Удалить аккаунт</Button>
+            <Button className="bg-[#FF0000] font-normal text-[25px] px-[72px] py-4">Удалить аккаунт</Button>
         </div>
     )
 }

@@ -3,9 +3,8 @@ import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { } from "react";
 import useAuth from "@/hooks/useAuth";
-import { useSnackbar } from "notistack";
 
 const schema = z.object({
     email: z
@@ -22,8 +21,6 @@ type SchemaType = z.infer<typeof schema>;
 const Login = () => {
     const { handleSignIn } = useAuth();
     const navigate = useNavigate();
-    const [error, setError] = useState<string>("");
-    const { enqueueSnackbar } = useSnackbar();
 
     const {
         register,
@@ -35,19 +32,12 @@ const Login = () => {
 
     const handleSignInHere = async (data: SchemaType) => {
         try {
-            const res = await handleSignIn(data);
-            const success = res.success || false;
-            const errorFromServer = res.error || "";
+            const response = await handleSignIn(data);
+            console.log("Response:", response);
 
-            if (success) {
-                navigate('/myaccount');
-            }
-            if (errorFromServer) {
-                if (errorFromServer === 'Пользователь уже существует') {
-                    setError(errorFromServer);
-                } else {
-                    enqueueSnackbar(errorFromServer, { variant: "error" });
-                }
+            if (response && response.message === 'ok') {
+                console.log("User logged in successfully")
+                navigate("/");
             }
         } catch (error) {
             console.error("Error signing in:", error);
@@ -79,11 +69,6 @@ const Login = () => {
                                 {errors.password.message}
                             </p>
                         )}
-                        {
-                            error && <p className="text-[#FF0000] font-medium text-lg leading-8 self-start">
-                                {error}
-                            </p>
-                        }
                     </div>
                     <input {...register("password")}
                         type="password" id="password" className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-7 py-3 text-[#979797] text-2xl appearance-none" />

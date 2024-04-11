@@ -3,9 +3,10 @@ import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import Santa from '@/assets/icons/messageSentSanta.svg';
 import { ThreeDots } from "react-loader-spinner";
+import { Link } from "react-router-dom";
 import { AuthClient } from "@/context/AuthProvider";
-import Message from "@/components/Message/Message";
 const schema = z.object({
     email: z
         .string()
@@ -33,8 +34,14 @@ const PasswordRecovery = () => {
         setLoading(true);
         try {
             const response = await AuthClient.post(`/auth/password-recovery`, {
-                email: data.email,
-            });
+                email: data.email
+            },
+                {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }
+            );
             if (response.status === 200) {
                 console.log('Success');
                 setMessageSent(true);
@@ -79,7 +86,12 @@ const PasswordRecovery = () => {
                         </form>
                     </>
                 ) : (
-                    <Message type="passwordRecovery" />
+                    <>
+                        <h1 className="font-bold text-[38px] text-[#333333] mb-[106px]">Письмо отправлено!</h1>
+                        <img src={Santa} alt="Santa Claus" className="rounded-[20px]" />
+                        <Link to="/login" className="text-[#FF6300] block leading-8 cursor-pointer mt-[16px] disabled:cursor-not-allowed"><span className="font-bold underline">Войти в аккаунт</span></Link>
+
+                    </>
                 )
             }
 
