@@ -30,39 +30,25 @@ const MyGames = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await AuthClient.get("/event");
-                if (response.status === 200) {
-                    setGames(response.data);
-                    console.log(response.data);
+                // Fetch user email
+                const userResponse = await AuthClient.get("/users");
+                const userEmail = userResponse.data.email;
+                setUser({ email: userEmail });
+
+                // Fetch events
+                const eventsResponse = await AuthClient.get("/event");
+                if (eventsResponse.status === 200) {
+                    setGames(eventsResponse.data);
+                    console.log(eventsResponse.data);
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching data:", error);
                 enqueueSnackbar("Что-то пошло не так", { variant: "error" });
             }
         };
 
         fetchData();
-    }, [setGames]);
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await AuthClient.get("/users");
-                console.log(response.data);
-                setUser(response.data.email)
-                console.log(user);
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                enqueueSnackbar("Ошибка при загрузке данных", { variant: "error" });
-            }
-        };
-
-        fetchData();
-    }, [user])
-
-
+    }, []);
 
     return (
         <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
@@ -81,15 +67,15 @@ const MyGames = () => {
                 </>
             ) : (
                 <>
-                    <Button className="font-normal text-[25px] px-[72px] py-4 min-w-[630px] mb-[54px]">Мои игры</Button>
+                    <Button className="font-normal text-[25px] px-[72px] py-3 min-w-[630px] mb-[54px]">Мои игры</Button>
                     {
                         games.length > 0 && (
-                            <section className="flex flex-col gap-[34px]">
+                            <section className="grid grid-cols-2 grid-rows-2 gap-y-8 gap-x-5">
                                 {games.map((game) => (
-                                    <div key={game.identificator} className="min-w-[307px] h-[220px] border-solid border-[3px] rounded-[25px] border-[#C0E3E5]">
+                                    <div key={game.identificator} className="min-w-[307px] h-[220px] border-solid border-[3px] rounded-[25px] border-[#C0E3E5] cursor-pointer">
                                         <div className="px-[53px] p-[23px] text-center flex flex-col justify-between h-[100%]">
                                             <p className="text-[#FF6300] font-bold text-[25px]">{game.name}</p>
-                                            <p className="text-[10px] text-[#979797] leading-5 font-bold">{game.owner_email === user.email ? 'Вы организатор' : ' Вы участник'} <br /> {game.owner_email} {user.email}</p>
+                                            <p className="text-[14px] text-[#979797] leading-6 font-bold">{game.owner_email === user.email ? 'Вы организатор' : ' Вы участник'} <br /> {game.playersNumber}</p>
                                         </div>
                                     </div>
                                 ))}
