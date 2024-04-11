@@ -7,7 +7,6 @@ import MainPage from "./pages/MainPage/MainPage";
 import MyCabinet from "./pages/MyCabinet/MyCabinet";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ErrorBoundary from "./pages/ErrorBoundary/ErrorBoundary";
-import useAuth from "./hooks/useAuth";
 import CreateGame from "./pages/CreateGame/CreateGame";
 import MyGames from "./pages/MyGames/MyGames";
 import SignOut from "./pages/SignOut/SignOut";
@@ -17,8 +16,6 @@ import Wishlist from "./pages/Wishlist/Wishlist";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
-  const { isUserloggedIn } = useAuth();
-
 
   return (
     <ErrorBoundary>

@@ -2,7 +2,6 @@ import Santa from '@/assets/icons/messageSentSanta.svg';
 import Button from '@/components/ui/Button/Button';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Game } from '../MyGames/MyGames';
 import { AuthClient } from '@/context/AuthProvider';
 
@@ -20,7 +19,7 @@ const GamePage = () => {
                     }
                 });
                 if (response.status === 200) {
-                    setGame(response.data);
+                    setGame(response.data[0]);
                     console.log(response.data);
 
                 }
@@ -42,8 +41,8 @@ const GamePage = () => {
                 <img src={Santa} alt="Santa Claus" className="rounded-[20px] mb-7" />
                 {game ? (
                     <div className='text-center mb-5'>
-                        <h4 className='text-[20px] text-[#333333] font-bold'>{game.name}</h4>
-                        <p className='text-[15px] text-[#333333] leading-[34px] text-center'>Автор: {game.owner_email}</p>
+                        <h3 className='text-[15px] text-[#333333] leading-[34px] text-center'>Автор: {game.owner_email}</h3>
+                        <h4 className='text-[20px] text-[#333333] font-bold'>Количество игроков {game.playersNumber}</h4>
                     </div>
                 ) : (
                     <div className='text-center mb-5'>
@@ -52,7 +51,7 @@ const GamePage = () => {
                     </div>
                 )}
                 <Button className='py-2'>
-                    <Link to={`/game/${gameId}/addPlayers`} className="block leading-8 cursor-pointer disabled:cursor-not-allowed"><span className="font-bold">Добавить участников</span>
+                    <Link to={`/game/${gameId}/addPlayers`} state={{ gameId: gameId }} className="block leading-8 cursor-pointer disabled:cursor-not-allowed"><span className="font-bold">Добавить участников</span>
                     </Link>
                 </Button>
             </div >
