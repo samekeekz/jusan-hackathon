@@ -1,15 +1,18 @@
 import Button from "@/components/ui/Button/Button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 const AddPlayers = () => {
+    const location = useLocation();
+    const { gameId } = location.state;
+
 
     return (
         <div className="flex flex-col items-center bg-white max-w-[850px] py-[132px] px-[190px] rounded-[20px] mx-auto mb-[5rem]">
             <h1 className="font-bold text-[38px] text-[#333333] mb-12">Добавить участников</h1>
             <div className="flex flex-col gap-[30px] w-[400px]">
                 <Button className="text-[18px] px-[20px]">
-                    <Link to="">
+                    <Link to={`/game/${gameId}/wishlist`} state={{ gameId: gameId }}>
                         Создать свою карточку участника
                     </Link>
                 </Button>
