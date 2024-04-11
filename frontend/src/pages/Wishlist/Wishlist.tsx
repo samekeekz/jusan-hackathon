@@ -15,7 +15,7 @@ const Wishlist = () => {
   const location = useLocation();
   const { gameId } = location.state;
 
-  const [gifts, setGifts] = useState<Gift[]>([{ description: "", card_id: "", priority: 1 }]);
+  const [gifts, setGifts] = useState<Gift[]>([{ description: "", card_id: uuidv4(), priority: 1 }]);
 
   const addGift = () => {
     setGifts(prevGifts => [...prevGifts, { description: "", card_id: uuidv4(), priority: prevGifts.length + 1 }]);

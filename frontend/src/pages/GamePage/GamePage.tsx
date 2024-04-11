@@ -2,7 +2,6 @@ import Santa from '@/assets/icons/messageSentSanta.svg';
 import Button from '@/components/ui/Button/Button';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Game } from '../MyGames/MyGames';
 import { AuthClient } from '@/context/AuthProvider';
 
