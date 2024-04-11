@@ -16,7 +16,7 @@ export default function Header() {
         <Link to="/">
           <img src={envelope} alt="envelope" />
         </Link>
-        <nav className='text-[#FF6300] font-bold'>
+        <nav className='text-[#FF6300] text-xl font-bold'>
           <ul className='flex'>
             {
               !isUserloggedIn ? (
@@ -32,9 +32,6 @@ export default function Header() {
                 <>
                   <li className='pr-[1.4375rem]'>
                     <Link to='/mygames'>Мои Игры</Link>
-                  </li>
-                  <li className='pl-[1.4375rem]'>
-                    <Link to='/login'>Уведомления</Link>
                   </li>
                   <li className='pl-[1.4375rem] border-[#FF6300]'>
                     <Link to='/myaccount'>Мой аккаунт</Link>

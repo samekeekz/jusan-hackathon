@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
     name: z.string().trim().min(3, { message: "Минимальная длина 3 символа" }).max(50, { message: "Максимальная длина 50 символов" }),
-    identificator: z.string().trim().min(10, { message: "Минимальная длина 3 символа" }).max(10, { message: "Максимальная длина 10 символов" }),
+    identificator: z.string().trim().min(10, { message: "Минимальная длина 10 символа" }).max(10, { message: "Максимальная длина 10 символов" }),
     price: z.coerce.number().positive({ message: "Должен быть больше 0" }).optional(),
 });
 
