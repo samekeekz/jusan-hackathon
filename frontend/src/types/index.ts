@@ -1,3 +1,4 @@
 export type ResponseDataType = {
-    token: string;
+    token?: string;
+    message?: string
 };

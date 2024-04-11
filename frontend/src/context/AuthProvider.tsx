@@ -1,9 +1,8 @@
-import { createContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useState, ReactNode } from "react";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { enqueueSnackbar } from "notistack";
 import { SignUpType } from "@/pages/Registration/Register";
-import { ResponseDataType } from "../types";
-import { setCookie, destroyCookie, parseCookies } from "nookies"; // Import nookies for cookie management
+import { setCookie, destroyCookie, parseCookies } from "nookies";
 
 export const getCookie = (key: string) => {
     const cookies = parseCookies();
@@ -16,7 +15,7 @@ export const AuthClient: AxiosInstance = axios.create({
 });
 
 AuthClient.interceptors.request.use((config) => {
-    const token = getCookie("jwtToken"); // Retrieve token from cookie
+    const token = getCookie("jwtToken");
 
     if (token && !config.url?.startsWith("/auth")) {
         config.headers["Authorization"] = `Bearer ${token}`;
@@ -30,16 +29,18 @@ AuthClient.interceptors.request.use((config) => {
 });
 
 export type AuthContextType = {
-    handleSignUp: (data: SignUpType) => Promise<{ message: string }>;
-    handleSignIn: (data: SignUpType) => Promise<{ message: string }>;
+    handleSignUp: (data: SignUpType) => Promise<{ success?: boolean, error?: string }>;
+    handleSignIn: (data: SignUpType) => Promise<{ success?: boolean, error?: string }>;
     handleLogOut: () => void;
+    handleDeleteAccount: () => void;
     isUserloggedIn: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType>({
-    handleSignUp: async () => ({ message: "" }),
-    handleSignIn: async () => ({ message: "" }),
+    handleSignUp: async () => ({ success: false, error: "" }),
+    handleSignIn: async () => ({ success: false, error: "" }),
     handleLogOut: async () => ({ message: "" }),
+    handleDeleteAccount: async () => ({ message: "" }),
     isUserloggedIn: false,
 });
 
@@ -48,97 +49,83 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [isUserloggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+    const [isUserloggedIn, setIsUserLoggedIn] = useState<boolean>(!!getCookie("jwtToken"));
 
-    useEffect(() => {
-        const token = getCookie("jwtToken");
-        if (token) {
-            setIsUserLoggedIn(true);
-        }
-    }, []);
 
     const handleLogOut = () => {
-        destroyCookie(null, "jwtToken"); // Remove token from cookie
+        destroyCookie(null, "jwtToken");
         setIsUserLoggedIn(false);
     };
 
     const handleSignUp = async (data: SignUpType) => {
-        return AuthClient.post("/auth/register", data)
-            .then((res: { data: ResponseDataType }) => {
-                const { token } = res.data;
+        try {
+            const res = await AuthClient.post("/auth/register", data);
+            const token = res.data.token || "";
 
-                setCookie(null, "jwtToken", token, { path: "/" }); // Store token in cookie
-                console.log(res.data);
-
-                return enqueueSnackbar("Вы успешно зарегистрировались", { variant: "success" });
-            })
-            .catch((error) => {
-                if (error.response && error.response.data) {
-                    const { message } = error.response.data;
-                    if (message === 'Неверный пароль') {
-                        return { message };
-                    }
-                    enqueueSnackbar(message, { variant: "error" });
-                }
-                enqueueSnackbar("Что-то пошло не так", { variant: "error" });
-                return Promise.reject(error);
-            });
+            if (token) {
+                setCookie(null, "jwtToken", token, { path: "/" });
+                enqueueSnackbar("Вы успешно зарегистрировались", { variant: "success" });
+                return { success: true };
+            }
+        } catch (error) {
+            if ((error as AxiosError).response && (error as AxiosError).response?.status === 409) {
+                return { error: "Пользователь уже существует" };
+            } else {
+                return { error: "Что-то пошло не так" };
+            }
+        }
     };
+
 
     const handleSignIn = async (data: SignUpType) => {
-        return AuthClient.post("/auth/authenticate", data)
-            .then((res: { data: ResponseDataType }) => {
-                const { token } = res.data;
+        try {
+            const res = await AuthClient.post("/auth/authenticate", data);
+            const token = res.data.token || "";
 
-                setCookie(null, "jwtToken", token, { path: "/" }); // Store token in cookie
-                console.log(res.data);
+            if (token) {
+                setCookie(null, "jwtToken", token, { path: "/" });
                 setIsUserLoggedIn(true);
-                enqueueSnackbar("Вы успешно залогинились", { variant: "success" });
-                return { message: 'ok' }
-            })
-            .catch((error) => {
-                if (error.response && error.response.data) {
-                    const { token } = error.response.data;
-                    if (token) {
-                        console.log("Token in error response:", token);
-                    }
-                    enqueueSnackbar(error.response.data as string, { variant: "error" });
-                }
-                enqueueSnackbar("Что-то пошло не так", { variant: "error" });
-            });
+                enqueueSnackbar("Вы успешно вошли", { variant: "success" });
+                return { success: true };
+            }
+        } catch (error) {
+            if ((error as AxiosError).response && (error as AxiosError).response?.status === 400) {
+                return { error: "Неправильный пароль" };
+            } else {
+                return { error: "Что-то пошло не так" };
+            }
+        }
     };
 
-    const handleSaveAccountDetails = async (data: { name: string, email: string }) => {
-        return AuthClient.post("/users/update/general", data)
-            .then((res: { data: { name: string, email: string } }) => {
-                return res.data;
-            })
-            .catch((error) => {
-                if (error.response && error.response.data) {
-                    enqueueSnackbar(error.response.data as string, { variant: "error" });
-                }
-                enqueueSnackbar("Что-то пошло не так", { variant: "error" });
-            });
-    }
 
-    useEffect(() => {
-        const handlePersistedLogOut = (event: StorageEvent) => {
-            if (event.key === import.meta.env.VITE_LOGOUT_STORAGE_KEY) {
-                destroyCookie(null, "jwtToken"); // Remove token from cookie
-                setIsUserLoggedIn(false);
-            }
-        };
+    const handleDeleteAccount = async () => {
+        try {
+            await AuthClient.delete("/users");
+            destroyCookie(null, "jwtToken");
+            setIsUserLoggedIn(false);
+            enqueueSnackbar("Your account has been deleted", { variant: "success" });
+        } catch (error) {
+            console.log(error);
+            enqueueSnackbar("Something went wrong", { variant: "error" });
+        }
+    };
 
-        const handleBeforeUnload = () => {
-            destroyCookie(null, "jwtToken"); // Remove token from cookie when tab or browser is closed
-        };
 
-        window.addEventListener("storage", handlePersistedLogOut);
 
-        return () => {
-            window.removeEventListener("storage", handlePersistedLogOut);
-        };
-    }, []);
+    // useEffect(() => {
+    //     const handlePersistedLogOut = (event: StorageEvent) => {
+    //         if (event.key === import.meta.env.VITE_LOGOUT_STORAGE_KEY) {
+    //             destroyCookie(null, "jwtToken");
+    //             setIsUserLoggedIn(false);
+    //         }
+    //     };
+
+    //     window.addEventListener("storage", handlePersistedLogOut);
+
+    //     return () => {
+    //         window.removeEventListener("storage", handlePersistedLogOut);
+    //     };
+    // }, []);
 
     return (
         <AuthContext.Provider
@@ -146,7 +133,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 handleSignUp,
                 handleSignIn,
                 handleLogOut,
-                handleSaveAccountDetails,
+                handleDeleteAccount,
                 isUserloggedIn
             }}
         >

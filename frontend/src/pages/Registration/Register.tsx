@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button/Button";
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSnackbar } from "notistack";
 import useAuth from "@/hooks/useAuth";
@@ -20,15 +20,28 @@ export type SignUpType = z.infer<typeof schema>;
 
 
 const Register = () => {
+  const navigate = useNavigate();
   const { handleSignUp } = useAuth();
   const [error, setError] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar()
 
   const onHandleSubmit = async (data: SignUpType) => {
     try {
-      const { message } = await handleSignUp(data);
-      if (message && message === 'Неверный пароль') {
-        setError(message);
+      const res = await handleSignUp(data);
+      const success = res.success || false;
+      const errorFromServer = res.error || "";
+      console.log(res);
+
+      if (success) {
+        navigate('/login');
+      }
+
+      if (errorFromServer) {
+        if (errorFromServer === 'Пользователь уже существует') {
+          setError(errorFromServer);
+        } else {
+          enqueueSnackbar(errorFromServer, { variant: "error" });
+        }
       }
     } catch (error) {
       enqueueSnackbar("Что-то пошло не так", { variant: "error" });

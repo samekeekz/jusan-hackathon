@@ -1,9 +1,14 @@
 import envelope from '../../assets/icons/envelope.svg';
 import { Link } from 'react-router-dom'
 import useAuth from '@/hooks/useAuth';
+import { useEffect } from 'react';
 
 export default function Header() {
   const { isUserloggedIn } = useAuth();
+
+  useEffect(() => {
+    console.log("isUserloggedIn", isUserloggedIn)
+  }, [isUserloggedIn])
 
   return (
     <header className="h-[5rem] bg-[#ffff] relative mb-[7.5rem]">
@@ -11,7 +16,7 @@ export default function Header() {
         <Link to="/">
           <img src={envelope} alt="envelope" />
         </Link>
-        <nav className='text-[#FF6300] font-bold'>
+        <nav className='text-[#FF6300] text-xl font-bold'>
           <ul className='flex'>
             {
               !isUserloggedIn ? (
@@ -26,13 +31,13 @@ export default function Header() {
               ) : (
                 <>
                   <li className='pr-[1.4375rem]'>
-                    <Link to='/signup'>Мои Игры</Link>
-                  </li>
-                  <li className='pl-[1.4375rem]'>
-                    <Link to='/login'>Уведомления</Link>
+                    <Link to='/mygames'>Мои Игры</Link>
                   </li>
                   <li className='pl-[1.4375rem] border-[#FF6300]'>
                     <Link to='/myaccount'>Мой аккаунт</Link>
+                  </li>
+                  <li className='pl-[1.4375rem]'>
+                    <Link to='/signout'>Выйти</Link>
                   </li>
                 </>
               )
