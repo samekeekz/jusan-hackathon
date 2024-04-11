@@ -7,8 +7,6 @@ import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-const MAX_FILE_SIZE = 10000000;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const schemaAccountDetails = z.object({
     fullName: z
@@ -32,8 +30,16 @@ type SchemaAccountDetailsType = z.infer<typeof schemaAccountDetails>;
 
 const MyCabinet = () => {
     const { isUserloggedIn, handleDeleteAccount } = useAuth();
+
     const navigate = useNavigate();
 
+
+    useEffect(() => {
+        if (!isUserloggedIn) {
+            navigate("/login");
+        }
+
+    }, [isUserloggedIn, navigate])
 
     const form1 = useForm<SchemaAccountDetailsType>({
         resolver: zodResolver(schemaAccountDetails),
@@ -107,7 +113,7 @@ const MyCabinet = () => {
 
     const handleOnClickDeteteAccount = () => {
         handleDeleteAccount();
-        navigate("/login");
+        navigate("/", { replace: true });
     }
 
 

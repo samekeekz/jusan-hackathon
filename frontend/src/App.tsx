@@ -10,6 +10,9 @@ import ErrorBoundary from "./pages/ErrorBoundary/ErrorBoundary";
 import useAuth from "./hooks/useAuth";
 import CreateGame from "./pages/CreateGame/CreateGame";
 import MyGames from "./pages/MyGames/MyGames";
+import SignOut from "./pages/SignOut/SignOut";
+import AddPlayers from "./pages/AddPlayers/AddPlayers";
+import GamePage from "./pages/GamePage/GamePage";
 
 function App() {
   const { isUserloggedIn } = useAuth();
@@ -20,12 +23,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<MainPage />} />
+          <Route path="signout" element={<SignOut />} />
           <Route path="signup" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="recoverPassword" element={<PasswordRecovery />} />
           <Route path="myaccount" element={<MyCabinet />} />
           <Route path="createGame" element={<CreateGame />} />
-          <Route path="mygames" element={<MyGames isloggedIn={true} />} />
+          <Route path="mygames" element={<MyGames />} />
+          <Route path="addPlayers" element={<AddPlayers />} />
+          <Route path="game/:id" element={<GamePage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

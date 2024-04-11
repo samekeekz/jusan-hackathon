@@ -3,9 +3,7 @@ import Button from "@/components/ui/Button/Button"
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import Santa from '@/assets/icons/messageSentSanta.svg';
 import { ThreeDots } from "react-loader-spinner";
-import { Link } from "react-router-dom";
 import { AuthClient } from "@/context/AuthProvider";
 import Message from "@/components/Message/Message";
 const schema = z.object({
@@ -35,14 +33,8 @@ const PasswordRecovery = () => {
         setLoading(true);
         try {
             const response = await AuthClient.post(`/auth/password-recovery`, {
-                email: data.email
-            },
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                }
-            );
+                email: data.email,
+            });
             if (response.status === 200) {
                 console.log('Success');
                 setMessageSent(true);

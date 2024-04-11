@@ -31,13 +31,16 @@ export default function Header() {
               ) : (
                 <>
                   <li className='pr-[1.4375rem]'>
-                    <Link to='/signup'>Мои Игры</Link>
+                    <Link to='/mygames'>Мои Игры</Link>
                   </li>
                   <li className='pl-[1.4375rem]'>
                     <Link to='/login'>Уведомления</Link>
                   </li>
                   <li className='pl-[1.4375rem] border-[#FF6300]'>
                     <Link to='/myaccount'>Мой аккаунт</Link>
+                  </li>
+                  <li className='pl-[1.4375rem]'>
+                    <Link to='/signout'>Выйти</Link>
                   </li>
                 </>
               )

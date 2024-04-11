@@ -27,14 +27,22 @@ const Register = () => {
 
   const onHandleSubmit = async (data: SignUpType) => {
     try {
-      const { message } = await handleSignUp(data);
-      if (message && message === 'Неверный пароль') {
-        setError(message);
-        return;
+      const res = await handleSignUp(data);
+      const success = res.success || false;
+      const errorFromServer = res.error || "";
+      console.log(res);
+
+      if (success) {
+        navigate('/login');
       }
 
-      navigate("/login");
-
+      if (errorFromServer) {
+        if (errorFromServer === 'Пользователь уже существует') {
+          setError(errorFromServer);
+        } else {
+          enqueueSnackbar(errorFromServer, { variant: "error" });
+        }
+      }
     } catch (error) {
       enqueueSnackbar("Что-то пошло не так", { variant: "error" });
     }
