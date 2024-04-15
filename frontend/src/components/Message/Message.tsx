@@ -1,10 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import Button from "../ui/Button/Button";
 import MessageTitle from "../MessageTitle/MessageTitle";
 import MessageText from "../MessageText/MessageText";
 import ImageSanta from "../ImageSanta/ImageSanta";
 import GameTitle from "../GameTitle/GameTitle";
+import ButtonLink from "../ui/ButtonLink/ButtonLink";
 
 type MessageProps = {
   title?: string;
@@ -33,14 +32,7 @@ const Message: React.FC<MessageProps> = ({
       )}
       <ImageSanta className="mb-5" />
       <MessageText smallText={smallText} label={label} className="mb-5" />
-      <Button>
-        <Link
-          to={link}
-          className="block leading-8 cursor-pointer disabled:cursor-not-allowed"
-        >
-          <span className="font-bold">{linkText}</span>
-        </Link>
-      </Button>
+      <ButtonLink link={link}>{linkText}</ButtonLink>
     </div>
   );
 };

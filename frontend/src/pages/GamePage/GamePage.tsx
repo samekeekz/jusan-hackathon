@@ -6,7 +6,7 @@ import Message from "@/components/Message/Message";
 import { PacmanLoader } from "react-spinners";
 import { enqueueSnackbar } from "notistack";
 
-type User = {
+export type User = {
   email: string;
 };
 
