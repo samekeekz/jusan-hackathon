@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Santa from "@/assets/icons/messageSentSanta.svg";
 import { Link } from "react-router-dom";
 import Button from "../ui/Button/Button";
+import { AuthClient } from "@/context/AuthProvider";
 
 type MessageProps = {
   type: "invitations" | "passwordRecovery" | "playerAdded" | "invitation";
@@ -18,8 +19,8 @@ const Message: React.FC<MessageProps> = ({ type }) => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`/api/${type}`);
-      const data = await response.json();
+      const response = await AuthClient.get("/users");
+      const data = response.data.email;
       setOrganiser(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -49,10 +50,10 @@ const Message: React.FC<MessageProps> = ({ type }) => {
         };
       case "invitation":
         return {
-          title: "Карточка участника создана!",
+          title: `${organiser} приглашает Вас в игру`,
           label:
             "Вам придет уведомление, как только Организатор проведет жеребьевку",
-          linkText: "На главную",
+          linkText: "Создать карточку участника",
         };
       default:
         return {
