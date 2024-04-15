@@ -16,7 +16,6 @@ import Wishlist from "./pages/Wishlist/Wishlist";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
-
   return (
     <ErrorBoundary>
       <Routes>
@@ -26,17 +25,59 @@ function App() {
           <Route path="signup" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="recoverPassword" element={<PasswordRecovery />} />
-          <Route path="myaccount" element={<ProtectedRoute><MyCabinet /></ProtectedRoute>} />
-          <Route path="createGame" element={<ProtectedRoute><CreateGame /></ProtectedRoute>} />
-          <Route path="mygames" element={<ProtectedRoute><MyGames /></ProtectedRoute>} />
-          <Route path="game/:id" element={<ProtectedRoute><GamePage /></ProtectedRoute>} />
-          <Route path="game/:id/addPlayers" element={<ProtectedRoute><AddPlayers /></ProtectedRoute>} />
-          <Route path="game/:id/wishlist" element={<ProtectedRoute returnBack={true}><Wishlist /></ProtectedRoute>} />
+          <Route
+            path="myaccount"
+            element={
+              <ProtectedRoute>
+                <MyCabinet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="createGame"
+            element={
+              <ProtectedRoute>
+                <CreateGame />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="mygames"
+            element={
+              <ProtectedRoute>
+                <MyGames />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="game/:id"
+            element={
+              <ProtectedRoute>
+                <GamePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="game/:id/addPlayers"
+            element={
+              <ProtectedRoute>
+                <AddPlayers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="game/:id/wishlist"
+            element={
+              <ProtectedRoute returnBack={true}>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </ErrorBoundary>
-  )
+  );
 }
 
 export default App;
