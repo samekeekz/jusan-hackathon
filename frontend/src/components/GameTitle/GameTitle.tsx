@@ -12,7 +12,7 @@ const GameTitle = ({ gameTitle, organiser_email }: Props) => {
       <div className="flex flex-col">
         <p className="text-[25px] text-[#333333] leading-[34px]">{gameTitle}</p>
         <Link
-          className="text-[18px] text-[#3E3B3B] leading-[34px] outline"
+          className="text-[18px] text-[#3E3B3B] leading-[34px] underline hover:text-[#FF6300]"
           to={`mailto:${organiser_email}`}
         >
           Связаться с Организатором

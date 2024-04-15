@@ -55,9 +55,9 @@ const GamePage = () => {
       {!isLoading ? (
         game && game.active ? (
           game?.owner_email !== user.email ? (
-            cardNeccessary ? (
+            !cardNeccessary ? (
               <Message
-                title={`${user.email} приглашает вас в игру!`}
+                title={`${game.owner_email} приглашает вас в игру!`}
                 label={`Автор: ${game.owner_email}`}
                 smallText="Жеребьевка еще не состоялась"
                 linkText="Принять участие"
@@ -67,7 +67,7 @@ const GamePage = () => {
               />
             ) : (
               <Message
-                title={`${user.email} приглашает вас в игру!`}
+                title={`${game.owner_email} приглашает вас в игру!`}
                 label={`Автор: ${game.owner_email}`}
                 smallText="Жеребьевка еще не состоялась"
                 linkText="Вернуться в мои игры"
@@ -90,6 +90,7 @@ const GamePage = () => {
             title="Игра не активна"
             label="Жеребевка завершена"
             linkText="Узнать подопечного"
+            link=""
           />
         )
       ) : (

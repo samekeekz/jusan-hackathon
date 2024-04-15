@@ -3,7 +3,6 @@ import Button from "@/components/ui/Button/Button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { ThreeDots } from "react-loader-spinner";
 import { AuthClient } from "@/context/AuthProvider";
 import Message from "@/components/Message/Message";
 const schema = z.object({
@@ -81,15 +80,9 @@ const PasswordRecovery = () => {
             <p className="text-center text-[#979797] leading-8 cursor-pointer mb-20">
               Мы отправим ссылку с временным паролем на Вашу почту
             </p>
-            {loading ? (
-              <Button className="mb-4 self-center py-0 px-[97px]">
-                <ThreeDots color="#ffffff" width={60} height={68} />
-              </Button>
-            ) : (
-              <Button className="mb-4 self-center px-20" disabled={loading}>
-                Восстановить
-              </Button>
-            )}
+            <Button className="mb-4 self-center px-20" disabled={loading}>
+              {loading ? "Идет загрузка..." : "Восстановить"}
+            </Button>
           </form>
         </>
       ) : (

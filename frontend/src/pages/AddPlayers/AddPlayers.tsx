@@ -1,9 +1,9 @@
-import Button from "@/components/ui/Button/Button";
 import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { User } from "../GamePage/GamePage";
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 
 const AddPlayers = () => {
   const params = useParams();
@@ -18,6 +18,7 @@ const AddPlayers = () => {
         const userEmail = userResponse.data.email;
         if (userResponse.status === 200) {
           setUser({ email: userEmail });
+          console.log(user.email);
         }
 
         const response = await AuthClient.get(`/event/${gameId}`);
@@ -46,20 +47,16 @@ const AddPlayers = () => {
       </h1>
       <div className="flex flex-col gap-[30px] w-[400px]">
         {flag && (
-          <Button className="text-[18px] px-[20px]">
-            <Link to={`/game/${gameId}/wishlist`}>
-              Создать свою карточку участника
-            </Link>
-          </Button>
+          <ButtonLink link={`/game/${gameId}/wishlist`}>
+            Создать свою карточку участника
+          </ButtonLink>
         )}
-        <Button className="text-[18px] px-[20px]">
-          <Link to={`/game/${gameId}/invitations`}>
-            Добавить участников вручную
-          </Link>
-        </Button>
-        <Button className="text-[18px] px-[20px]">
-          <Link to={`/game/${gameId}/invite`}>Пригласить по ссылке</Link>
-        </Button>
+        <ButtonLink link={`/game/${gameId}/invitations`}>
+          Добавить участников вручную
+        </ButtonLink>
+        <ButtonLink link={`/game/${gameId}/invite`}>
+          Пригласить по ссылке
+        </ButtonLink>
       </div>
     </div>
   );
