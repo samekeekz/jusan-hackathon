@@ -1,63 +1,102 @@
-import Santa from '@/assets/icons/messageSentSanta.svg';
-import Button from '@/components/ui/Button/Button';
-import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { Game } from '../MyGames/MyGames';
-import { AuthClient } from '@/context/AuthProvider';
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Game } from "../MyGames/MyGames";
+import { AuthClient } from "@/context/AuthProvider";
+import Message from "@/components/Message/Message";
+import { PacmanLoader } from "react-spinners";
+import { enqueueSnackbar } from "notistack";
+
+type User = {
+  email: string;
+};
 
 const GamePage = () => {
-    const [game, setGame] = useState<Game | null>(null);
-    const location = useLocation();
-    const { gameId } = location.state;
+  const [game, setGame] = useState<Game | null>(null);
+  const params = useParams();
+  const gameId = params.id;
+  const [user, setUser] = useState<User>({ email: "" });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [cardNeccessary, setCardNeccessary] = useState<boolean>(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await AuthClient.get(`/event`, {
-                    params: {
-                        eventId: gameId
-                    }
-                });
-                if (response.status === 200) {
-                    setGame(response.data[0]);
-                    console.log(response.data);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userResponse = await AuthClient.get("/users");
+        const userEmail = userResponse.data.email;
+        if (userResponse.status === 200) {
+          setUser({ email: userEmail });
+        }
 
-                }
+        const response = await AuthClient.get(`/event/${gameId}`);
+        if (response.status === 200) {
+          setGame(response.data);
+          console.log(response.data);
+          const flag =
+            (response.data.emails &&
+              !!response.data.emails.find((email) => email === user.email)) ||
+            false;
 
-            } catch (error) {
-                console.log("Error fetching data:", error);
-            }
-        };
+          setCardNeccessary(flag);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.log("Error fetching data:", error);
+        enqueueSnackbar("Что-то пошло не так", { variant: "error" });
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-        fetchData();
-    }, [gameId]);
+    fetchData();
+  }, [gameId]);
 
+  return (
+    <div className="flex flex-col items-center">
+      {!isLoading ? (
+        game && game.active ? (
+          game?.owner_email !== user.email ? (
+            cardNeccessary ? (
+              <Message
+                title={`${user.email} приглашает вас в игру!`}
+                label={`Автор: ${game.owner_email}`}
+                smallText="Жеребьевка еще не состоялась"
+                linkText="Принять участие"
+                link={`/game/${gameId}/wishlist`}
+                gameTitle={game.name}
+                organiser_email={game.owner_email}
+              />
+            ) : (
+              <Message
+                title={`${user.email} приглашает вас в игру!`}
+                label={`Автор: ${game.owner_email}`}
+                smallText="Жеребьевка еще не состоялась"
+                linkText="Вернуться в мои игры"
+                link={`/mygames`}
+                gameTitle={game.name}
+                organiser_email={game.owner_email}
+              />
+            )
+          ) : (
+            <Message
+              title="Вы создали игру"
+              label="Пока что никого нет"
+              linkText="Добавить участников"
+              smallText="Добавьте участников, чтоб игра началась"
+              link={`/game/${gameId}/addPlayers`}
+            />
+          )
+        ) : (
+          <Message
+            title="Игра не активна"
+            label="Жеребевка завершена"
+            linkText="Узнать подопечного"
+          />
+        )
+      ) : (
+        <PacmanLoader size={50} color="#FF6300" />
+      )}
+    </div>
+  );
+};
 
-
-    return (
-        <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
-            <div className="flex flex-col items-center w-full">
-                <h1 className="font-bold text-[38px] text-[#333333] mb-9">Игра создана!</h1>
-                <img src={Santa} alt="Santa Claus" className="rounded-[20px] mb-7" />
-                {game ? (
-                    <div className='text-center mb-5'>
-                        <h3 className='text-[15px] text-[#333333] leading-[34px] text-center'>Автор: {game.owner_email}</h3>
-                        <h4 className='text-[20px] text-[#333333] font-bold'>Количество игроков {game.playersNumber}</h4>
-                    </div>
-                ) : (
-                    <div className='text-center mb-5'>
-                        <h4 className='text-[20px] text-[#333333] font-bold'>Пока что никого нет</h4>
-                        <p className='text-[15px] text-[#333333] leading-[34px] text-center'>Добавьте участников, чтоб игра началась</p>
-                    </div>
-                )}
-                <Button className='py-2'>
-                    <Link to={`/game/${gameId}/addPlayers`} state={{ gameId: gameId }} className="block leading-8 cursor-pointer disabled:cursor-not-allowed"><span className="font-bold">Добавить участников</span>
-                    </Link>
-                </Button>
-            </div >
-        </div>
-
-    )
-}
-
-export default GamePage
+export default GamePage;

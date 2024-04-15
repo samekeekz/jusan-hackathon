@@ -1,81 +1,41 @@
-import React, { useEffect, useState } from "react";
-import Santa from "@/assets/icons/messageSentSanta.svg";
+import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../ui/Button/Button";
-import { AuthClient } from "@/context/AuthProvider";
+import MessageTitle from "../MessageTitle/MessageTitle";
+import MessageText from "../MessageText/MessageText";
+import ImageSanta from "../ImageSanta/ImageSanta";
+import GameTitle from "../GameTitle/GameTitle";
 
 type MessageProps = {
-  type: "invitations" | "passwordRecovery" | "playerAdded" | "invitation";
+  title?: string;
+  label?: string;
+  smallText?: string;
+  linkText?: string;
+  link?: string;
+  gameTitle?: string;
+  organiser_email?: string;
 };
 
-const Message: React.FC<MessageProps> = ({ type }) => {
-  const [organiser, setOrganiser] = useState<string>(null);
-
-  useEffect(() => {
-    if (type === "invitation") {
-      fetchData();
-    }
-  }, [type]);
-
-  const fetchData = async () => {
-    try {
-      const response = await AuthClient.get("/users");
-      const data = response.data.email;
-      setOrganiser(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  const getMessageContent = () => {
-    switch (type) {
-      case "invitations":
-        return {
-          title: "Приглашения отправлены",
-          label:
-            "Вам придет уведомление, как только участники примут Ваше приглашение",
-          linkText: "На главную",
-        };
-      case "passwordRecovery":
-        return {
-          title: "Письмо отправлено!",
-          linkText: "Войти в аккаунт",
-        };
-      case "playerAdded":
-        return {
-          title: "Карточка участника создана!",
-          label:
-            "Вам придет уведомление, как только Организатор проведет жеребьевку",
-          linkText: "На главную",
-        };
-      case "invitation":
-        return {
-          title: `${organiser} приглашает Вас в игру`,
-          label:
-            "Вам придет уведомление, как только Организатор проведет жеребьевку",
-          linkText: "Создать карточку участника",
-        };
-      default:
-        return {
-          title: "",
-          label: "",
-          linkText: "",
-        };
-    }
-  };
-
-  const { title, label, linkText } = getMessageContent();
-
+const Message: React.FC<MessageProps> = ({
+  title,
+  label,
+  smallText,
+  linkText = "На главную",
+  link = "/",
+  gameTitle,
+  organiser_email,
+}) => {
   return (
-    <div className="flex flex-col items-center w-full">
-      <h1 className="font-bold text-[38px] text-[#333333] mb-9">{title}</h1>
-      <img src={Santa} alt="Santa Claus" className="rounded-[20px] mb-7" />
-      <p className="text-[15px] text-[#333333] leading-[34px] text-center mb-8">
-        {label}
-      </p>
+    <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto">
+      <MessageTitle title={title} className="mb-6" />
+      {gameTitle && organiser_email && (
+        <GameTitle gameTitle={gameTitle} organiser_email={organiser_email} />
+      )}
+      <ImageSanta className="mb-5" />
+      <MessageText smallText={smallText} label={label} className="mb-5" />
       <Button>
         <Link
-          to="/"
+          to={link}
           className="block leading-8 cursor-pointer disabled:cursor-not-allowed"
         >
           <span className="font-bold">{linkText}</span>

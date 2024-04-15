@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "@/components/ui/Button/Button";
 import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type Gift = {
   description: string;
@@ -10,9 +10,8 @@ type Gift = {
 };
 
 const Wishlist = () => {
-  const location = useLocation();
   const params = useParams();
-  const gameId = location.state?.gameId ?? params.id;
+  const gameId = params.id;
   const navigate = useNavigate();
 
   const [gifts, setGifts] = useState<Gift[]>([
@@ -97,7 +96,7 @@ const Wishlist = () => {
           <div className="w-10 h-10 self-center rounded-full bg-[#FF6300] font-bold text-[30px] flex items-center justify-center text-white">
             +
           </div>
-          <p className="font-bold text-[30px] text-[#333333]">
+          <p className="text-[20px] leading-[34px] text-[#333333]">
             Добавить еще подарки
           </p>
         </div>

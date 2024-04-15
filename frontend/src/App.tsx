@@ -14,6 +14,7 @@ import AddPlayers from "./pages/AddPlayers/AddPlayers";
 import GamePage from "./pages/GamePage/GamePage";
 import Wishlist from "./pages/Wishlist/Wishlist";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import AddPlayersManually from "./pages/AddPlayersManually/AddPlayersManually";
 
 function App() {
   return (
@@ -66,9 +67,17 @@ function App() {
             }
           />
           <Route
+            path="game/:id/invitations"
+            element={
+              <ProtectedRoute>
+                <AddPlayersManually />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="game/:id/wishlist"
             element={
-              <ProtectedRoute returnBack={true}>
+              <ProtectedRoute>
                 <Wishlist />
               </ProtectedRoute>
             }
