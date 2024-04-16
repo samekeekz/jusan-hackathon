@@ -101,7 +101,11 @@ const MyGames = () => {
                             : " Вы участник"}{" "}
                         </p>
                         <p className="text-[14px] text-[#979797]">
-                          {game.playersNumber} участников
+                          {game.playersNumber === 1
+                            ? `${game.playersNumber} участник`
+                            : game.playersNumber > 1 && game.playersNumber <= 5
+                            ? `${game.playersNumber} участника`
+                            : `${game.playersNumber} участников`}
                         </p>
                       </div>
                     </div>

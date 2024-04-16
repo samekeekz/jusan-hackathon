@@ -13,6 +13,7 @@ const Wishlist = () => {
   const params = useParams();
   const gameId = params.id;
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [gifts, setGifts] = useState<Gift[]>([
     { description: "", priority: 1 },
@@ -38,6 +39,7 @@ const Wishlist = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const eventData = {
         event_id: gameId,
@@ -50,12 +52,16 @@ const Wishlist = () => {
         enqueueSnackbar("Пожелания к подарку отправлены", {
           variant: "success",
         });
+        setLoading(false);
         navigate("/mygames");
       }
       console.log(res.data);
     } catch (error) {
       console.error("Error sending gifts:", error);
       enqueueSnackbar("Что-то пошло не так", { variant: "error" });
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,7 +107,7 @@ const Wishlist = () => {
           </p>
         </div>
         <Button type="submit" className="mt-10 mb-4 self-center px-20">
-          Далее
+          {loading ? "Идет сохранениe" : "Далее"}
         </Button>
       </form>
     </div>

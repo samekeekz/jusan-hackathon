@@ -18,7 +18,7 @@ type GamePanelProps = {
   id: string;
   shufflingStarted?: boolean;
   setShufflingStarted?: React.Dispatch<React.SetStateAction<boolean>>;
-  onItemDeleted?: () => void; // callback function prop
+  onItemDeleted?: () => void;
 };
 
 const GamePanel: React.FC<GamePanelProps> = ({
@@ -35,7 +35,9 @@ const GamePanel: React.FC<GamePanelProps> = ({
   onItemDeleted,
 }) => {
   const [showAllUsers, setShowAllUsers] = useState(false);
-  const visibleUsers = showAllUsers ? users : users.slice(0, 10);
+  const visibleUsers = users && showAllUsers ? users : users?.slice(0, 10);
+
+  console.log("GamePanel users:", users);
 
   const handleClick = async () => {
     setShufflingStarted(true);
@@ -74,13 +76,13 @@ const GamePanel: React.FC<GamePanelProps> = ({
     <div className="flex flex-col items-center bg-white w-[850px] min-h-[800px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-10">
       <MessageTitle title={title} className="mb-6" />
       <GameSantaImage className="mb-5" />
-      {visibleUsers.length > 0 && (
+      {visibleUsers && visibleUsers?.length > 0 && (
         <>
           <p className="text-[#333333] text-[20px] leading-[34px] mb-2">
-            Участники {users.length}
+            Участники {users?.length}
           </p>
-          <ul className="flex gap-3 flex-wrap mb-4">
-            {visibleUsers.map((email) => (
+          <ul className="flex justify-center w-full gap-3 flex-wrap mb-4">
+            {visibleUsers?.map((email) => (
               <li
                 className="flex gap-2 items-center px-4 py-0.5 bg-[#01787E] font-bold rounded-[20px] text-white text-[20px] leading-[34px]"
                 key={email}
@@ -113,7 +115,7 @@ const GamePanel: React.FC<GamePanelProps> = ({
               </li>
             ))}
           </ul>
-          {!showAllUsers && users.length > 10 && (
+          {!showAllUsers && users?.length > 10 && (
             <button
               className="border-none bg-transparent hover:underline text-[#979797] text-[20px] leading-[34px] mt-7"
               onClick={() => setShowAllUsers(true)}
@@ -125,7 +127,7 @@ const GamePanel: React.FC<GamePanelProps> = ({
       )}
       <MessageText smallText={smallText} label={label} className="mb-5" />
       <ButtonLink link={link1}>{link1Text}</ButtonLink>
-      {users.length > 2 && (
+      {users?.length > 2 && isAuthor && (
         <Button
           onClick={handleClick}
           className="mt-3 bg-[#5AB9BF] hover:bg-[#5AB9BF]"

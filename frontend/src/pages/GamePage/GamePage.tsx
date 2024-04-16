@@ -39,22 +39,19 @@ const GamePage = () => {
           const flag = data.emails.includes(user.email);
           setCardNeccessary(flag);
         }
-        setIsLoading(false);
       }
     } catch (error) {
       console.log("Error fetching data:", error);
       enqueueSnackbar("Что-то пошло не так", { variant: "error" });
-    } finally {
-      setIsLoading(false);
     }
   }, [gameId, user.email]);
 
   useEffect(() => {
-    fetchData();
+    fetchData().then(() => setIsLoading(false));
   }, [fetchData]);
 
   const handleItemDeleted = () => {
-    fetchData();
+    fetchData().then(() => setIsLoading(false));
   };
 
   return (
@@ -73,14 +70,14 @@ const GamePage = () => {
                 organiser_email={game.owner_email}
               />
             ) : (
-              <Message
+              <GamePanel
                 title={`${game.owner_email} приглашает вас в игру!`}
-                label={`Автор: ${game.owner_email}`}
                 smallText="Жеребьевка еще не состоялась"
-                linkText="Вернуться в мои игры"
-                link={`/mygames`}
-                gameTitle={game.name}
-                organiser_email={game.owner_email}
+                link1Text="Вернуться в мои игры"
+                link1={`/mygames`}
+                isAuthor={false}
+                users={game.emails}
+                id={gameId}
               />
             )
           ) : game.emails.length > 0 ? (
