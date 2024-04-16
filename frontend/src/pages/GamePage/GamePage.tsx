@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import { Game } from "../MyGames/MyGames";
 import { AuthClient } from "@/context/AuthProvider";
 import Message from "@/components/Message/Message";
@@ -20,48 +20,42 @@ const GamePage = () => {
   const [cardNeccessary, setCardNeccessary] = useState<boolean>(null);
   const [shufflingStarted, setShufflingStarted] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userResponse = await AuthClient.get("/users");
-        if (userResponse.status === 200) {
-          const userEmail = userResponse.data.email;
-          if (userEmail) {
-            setUser({ email: userEmail });
-          }
+  const fetchData = useCallback(async () => {
+    try {
+      const userResponse = await AuthClient.get("/users");
+      if (userResponse.status === 200) {
+        const userEmail = userResponse.data.email;
+        if (userEmail) {
+          setUser({ email: userEmail });
         }
+      }
 
-        const response = await AuthClient.get(`/event/${gameId}`);
-        if (response.status === 200) {
-          const data = response.data;
-          setGame(data);
+      const response = await AuthClient.get(`/event/${gameId}`);
+      if (response.status === 200) {
+        const data = response.data;
+        setGame(data);
 
-          if (data && data.emails && user.email) {
-            const flag = data.emails.includes(user.email);
-            setCardNeccessary(flag);
-          }
-          setIsLoading(false);
+        if (data && data.emails && user.email) {
+          const flag = data.emails.includes(user.email);
+          setCardNeccessary(flag);
         }
-      } catch (error) {
-        console.log("Error fetching data:", error);
-        enqueueSnackbar("Что-то пошло не так", { variant: "error" });
-      } finally {
         setIsLoading(false);
       }
-    };
-
-    fetchData();
+    } catch (error) {
+      console.log("Error fetching data:", error);
+      enqueueSnackbar("Что-то пошло не так", { variant: "error" });
+    } finally {
+      setIsLoading(false);
+    }
   }, [gameId, user.email]);
 
   useEffect(() => {
-    // Logic dependent on user.email can be placed here
-    console.log("Updated email:", user.email);
-  }, [user.email]);
+    fetchData();
+  }, [fetchData]);
 
-  useEffect(() => {
-    // Logic dependent on game can be placed here
-    console.log("Updated game:", game);
-  }, [game]);
+  const handleItemDeleted = () => {
+    fetchData();
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -89,23 +83,33 @@ const GamePage = () => {
                 organiser_email={game.owner_email}
               />
             )
-          ) : (
+          ) : game.emails.length > 0 ? (
             <GamePanel
               title="Игра создана"
+              link1Text="Добавить участников"
+              link1={`/game/${gameId}/addPlayers`}
+              id={gameId}
+              users={game.emails}
+              isAuthor={game?.owner_email === user.email}
+              onItemDeleted={handleItemDeleted}
+              shufflingStarted={shufflingStarted}
+              setShufflingStarted={setShufflingStarted}
+            />
+          ) : (
+            <GamePanel
+              title="Игра активна"
               label="Пока что никого нет"
               smallText="Добавьте участников, чтоб игра началась"
               link1Text="Добавить участников"
               link1={`/game/${gameId}/addPlayers`}
               id={gameId}
-              shufflingStarted={shufflingStarted}
-              setShufflingStarted={setShufflingStarted}
             />
           )
         ) : (
           <Message
             gameTitle={game.name}
             organiser_email={game.owner_email}
-            // title="Игра не активна"
+            title="Игра не активна"
             label="Жеребьевка завершена"
             linkText="Узнать Подопечного"
             link={`/game/${gameId}/receiver`}

@@ -5,6 +5,7 @@ import { AuthClient } from "@/context/AuthProvider";
 import { enqueueSnackbar } from "notistack";
 import { PacmanLoader } from "react-spinners";
 import { Link } from "react-router-dom";
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 
 export type Games = Game[];
 
@@ -54,7 +55,7 @@ const MyGames = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center bg-white max-w-[850px] min-h-[760px] py-[52px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
+    <div className="flex flex-col justify-center items-center bg-white max-w-[850px] min-h-[760px] py-[32px] px-[90px] rounded-[20px] mx-auto mb-[5rem]">
       {isLoading ? (
         <PacmanLoader size={50} color="#FF6300" />
       ) : games.length === 0 ? (
@@ -74,13 +75,11 @@ const MyGames = () => {
             <p>Создайте или вступите в игру, чтоб принять участие</p>
           </div>
 
-          <Button className="font-normal border-solid border-[3px] border-[#FF6300] bg-white hover:bg-white text-[25px] text-[#FF6300] px-[42px] py-2 mb-[70px]">
-            <Link to="/createGame">Создать игру</Link>
-          </Button>
+          <ButtonLink link="/createGame">Создать игру</ButtonLink>
         </>
       ) : (
         <>
-          <Button className="font-normal text-[25px] px-[72px] py-3 min-w-[630px] mb-[54px]">
+          <Button className="font-normal text-[25px] px-[72px] py-2 min-w-[630px] mb-[54px]">
             Мои игры
           </Button>
           {games.length > 0 && (
@@ -89,25 +88,29 @@ const MyGames = () => {
                 <Link
                   key={game.identificator}
                   to={`/game/${game.identificator}`}
-                  state={{ gameId: game.identificator }}
                 >
                   <div className="min-w-[307px] h-[220px] border-solid border-[3px] rounded-[25px] border-[#C0E3E5] cursor-pointer">
                     <div className="px-[53px] p-[23px] text-center flex flex-col justify-between h-[100%]">
                       <p className="text-[#FF6300] font-bold text-[25px]">
                         {game.name}
                       </p>
-                      <p className="text-[14px] text-[#979797] leading-6 font-bold">
-                        {game.owner_email === user.email
-                          ? "Вы организатор"
-                          : " Вы участник"}{" "}
-                        <br /> {game.playersNumber}
-                      </p>
+                      <div>
+                        <p className="text-[14px] text-[#979797] leading-6 font-bold">
+                          {game.owner_email === user.email
+                            ? "Вы организатор"
+                            : " Вы участник"}{" "}
+                        </p>
+                        <p className="text-[14px] text-[#979797]">
+                          {game.playersNumber} участников
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
               ))}
             </section>
           )}
+          <ButtonLink link="/createGame">Создать игру</ButtonLink>
         </>
       )}
     </div>

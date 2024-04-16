@@ -1,3 +1,4 @@
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 import { enqueueSnackbar } from "notistack";
 import { useParams } from "react-router-dom";
 
@@ -28,6 +29,7 @@ const Invite = () => {
         className="w-full border-[#C0E3E5] solid border-[2.8px] rounded-[20px] px-6 py-[18px] font-medium text-[#333333] text-2xl appearance-none whitespace-nowrap overflow-hidden text-ellipsis mb-16"
         onClick={handleClick}
       />
+      <ButtonLink link={`/game/${id}`}>Назад</ButtonLink>
     </div>
   );
 };
