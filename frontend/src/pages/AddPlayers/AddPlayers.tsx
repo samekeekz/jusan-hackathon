@@ -9,7 +9,7 @@ const AddPlayers = () => {
   const params = useParams();
   const gameId = params.id;
   const [user, setUser] = useState<User>({ email: "" });
-  const [flag, setFlag] = useState<boolean>(false);
+  const [flag, setFlag] = useState<boolean>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,15 +18,13 @@ const AddPlayers = () => {
         const userEmail = userResponse.data.email;
         if (userResponse.status === 200) {
           setUser({ email: userEmail });
-          console.log(user.email);
         }
 
         const response = await AuthClient.get(`/event/${gameId}`);
         if (response.status === 200) {
-          console.log(response.data);
           const flag1 =
             (response.data.emails &&
-              !!response.data.emails.find((email) => email === user.email)) ||
+              !!response.data.emails.includes(user.email)) ||
             false;
 
           setFlag(flag1);
@@ -46,7 +44,7 @@ const AddPlayers = () => {
         Добавить участников
       </h1>
       <div className="flex flex-col gap-[30px] w-[400px]">
-        {flag && (
+        {flag && flag && (
           <ButtonLink link={`/game/${gameId}/wishlist`}>
             Создать свою карточку участника
           </ButtonLink>

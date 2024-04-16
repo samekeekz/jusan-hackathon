@@ -5,6 +5,7 @@ import { AuthClient } from "@/context/AuthProvider";
 import Message from "@/components/Message/Message";
 import { PacmanLoader } from "react-spinners";
 import { enqueueSnackbar } from "notistack";
+import GamePanel from "@/components/GamePanel/GamePanel";
 
 export type User = {
   email: string;
@@ -16,27 +17,29 @@ const GamePage = () => {
   const gameId = params.id;
   const [user, setUser] = useState<User>({ email: "" });
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [cardNeccessary, setCardNeccessary] = useState<boolean>(false);
+  const [cardNeccessary, setCardNeccessary] = useState<boolean>(null);
+  const [shufflingStarted, setShufflingStarted] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userResponse = await AuthClient.get("/users");
-        const userEmail = userResponse.data.email;
         if (userResponse.status === 200) {
-          setUser({ email: userEmail });
+          const userEmail = userResponse.data.email;
+          if (userEmail) {
+            setUser({ email: userEmail });
+          }
         }
 
         const response = await AuthClient.get(`/event/${gameId}`);
         if (response.status === 200) {
-          setGame(response.data);
-          console.log(response.data);
-          const flag =
-            (response.data.emails &&
-              !!response.data.emails.find((email) => email === user.email)) ||
-            false;
+          const data = response.data;
+          setGame(data);
 
-          setCardNeccessary(flag);
+          if (data && data.emails && user.email) {
+            const flag = data.emails.includes(user.email);
+            setCardNeccessary(flag);
+          }
           setIsLoading(false);
         }
       } catch (error) {
@@ -48,7 +51,17 @@ const GamePage = () => {
     };
 
     fetchData();
-  }, [gameId]);
+  }, [gameId, user.email]);
+
+  useEffect(() => {
+    // Logic dependent on user.email can be placed here
+    console.log("Updated email:", user.email);
+  }, [user.email]);
+
+  useEffect(() => {
+    // Logic dependent on game can be placed here
+    console.log("Updated game:", game);
+  }, [game]);
 
   return (
     <div className="flex flex-col items-center">
@@ -77,20 +90,25 @@ const GamePage = () => {
               />
             )
           ) : (
-            <Message
-              title="Вы создали игру"
+            <GamePanel
+              title="Игра создана"
               label="Пока что никого нет"
-              linkText="Добавить участников"
               smallText="Добавьте участников, чтоб игра началась"
-              link={`/game/${gameId}/addPlayers`}
+              link1Text="Добавить участников"
+              link1={`/game/${gameId}/addPlayers`}
+              id={gameId}
+              shufflingStarted={shufflingStarted}
+              setShufflingStarted={setShufflingStarted}
             />
           )
         ) : (
           <Message
-            title="Игра не активна"
-            label="Жеребевка завершена"
-            linkText="Узнать подопечного"
-            link=""
+            gameTitle={game.name}
+            organiser_email={game.owner_email}
+            // title="Игра не активна"
+            label="Жеребьевка завершена"
+            linkText="Узнать Подопечного"
+            link={`/game/${gameId}/receiver`}
           />
         )
       ) : (

@@ -4,6 +4,7 @@ import MessageText from "../MessageText/MessageText";
 import ImageSanta from "../ImageSanta/ImageSanta";
 import GameTitle from "../GameTitle/GameTitle";
 import ButtonLink from "../ui/ButtonLink/ButtonLink";
+import IconExclamationPoint from "../IconExclamationPoint/IconExclamationPoint";
 
 type MessageProps = {
   title?: string;
@@ -30,7 +31,11 @@ const Message: React.FC<MessageProps> = ({
       {gameTitle && organiser_email && (
         <GameTitle gameTitle={gameTitle} organiser_email={organiser_email} />
       )}
-      <ImageSanta className="mb-5" />
+      {label === "Жеребьевка завершена" ? (
+        <IconExclamationPoint />
+      ) : (
+        <ImageSanta className="mb-5" />
+      )}
       <MessageText smallText={smallText} label={label} className="mb-5" />
       <ButtonLink link={link}>{linkText}</ButtonLink>
     </div>

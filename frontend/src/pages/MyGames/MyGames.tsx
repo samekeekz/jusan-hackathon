@@ -74,7 +74,7 @@ const MyGames = () => {
             <p>Создайте или вступите в игру, чтоб принять участие</p>
           </div>
 
-          <Button className="font-normal border-solid border-[3px] border-[#FF6300] bg-white text-[25px] text-[#FF6300] px-[42px] py-2 mb-[70px]">
+          <Button className="font-normal border-solid border-[3px] border-[#FF6300] bg-white hover:bg-white text-[25px] text-[#FF6300] px-[42px] py-2 mb-[70px]">
             <Link to="/createGame">Создать игру</Link>
           </Button>
         </>
