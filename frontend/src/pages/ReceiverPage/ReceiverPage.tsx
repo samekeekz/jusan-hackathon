@@ -30,6 +30,7 @@ const ReceiverPage = () => {
         if (res.status === 200) {
           const data = res.data;
           setReceiver(data);
+          console.log("Receiver data:", data);
         }
       } catch (error) {
         console.log("Error fetching data:", error);

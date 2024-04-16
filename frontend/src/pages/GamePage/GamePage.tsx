@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "../MyGames/MyGames";
 import { AuthClient } from "@/context/AuthProvider";
