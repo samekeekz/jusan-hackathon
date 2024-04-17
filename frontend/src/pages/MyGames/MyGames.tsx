@@ -83,7 +83,7 @@ const MyGames = () => {
             Мои игры
           </Button>
           {games.length > 0 && (
-            <section className="grid grid-cols-2 grid-rows-2 gap-y-8 gap-x-5">
+            <section className="grid grid-cols-2 grid-rows-2 gap-y-8 gap-x-5 mb-5">
               {games.map((game) => (
                 <Link
                   key={game.identificator}
