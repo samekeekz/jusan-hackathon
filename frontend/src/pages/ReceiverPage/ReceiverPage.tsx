@@ -5,11 +5,13 @@ import { AuthClient } from "@/context/AuthProvider";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Game } from "../MyGames/MyGames";
+import { enqueueSnackbar } from "notistack";
 
 export interface Receiver {
   receiverEmail: string;
   receiverName: string;
   receiverGiftList: ReceiverGiftList[];
+  giftSent: boolean;
 }
 
 export interface ReceiverGiftList {
@@ -56,12 +58,34 @@ const ReceiverPage = () => {
     fetchGame();
   }, [id]);
 
+  const handleGiftSending = async () => {
+    try {
+      const res = await AuthClient.post(`/event/gift-sent/${id}`, {
+        receiverEmail: receiver.receiverEmail,
+        receiverName: receiver.receiverName,
+        receiverGiftList: receiver.receiverGiftList,
+        giftSent: true,
+      });
+      if (res.status === 200) {
+        enqueueSnackbar("Подарки отправлены", { variant: "success" });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+    } catch (error) {
+      console.log("Error sending gift:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center bg-white max-w-[850px] py-[52px] px-[90px] rounded-[20px] mx-auto">
       <GameTitle gameTitle="gameTitle" organiser_email="organiser_email" />
       {receiver && (
         <>
-          <h3 className="text-[20px] text-[#333333] font-bold leading-[34px] mt-6 mb-[60px]">
+          <h3
+            className="text-[20px] text-[#333333] font-bold leading-[34px] mt-6 mb-[60px]"
+            title={receiver.receiverEmail}
+          >
             Карточка {receiver.receiverName}
           </h3>
           {game && game.isLimited && (
@@ -96,7 +120,11 @@ const ReceiverPage = () => {
               </div>
             ))}
           <div className="mt-[60px] flex items-center gap-5">
-            <Button>Подарок отправлен</Button>
+            {receiver.giftSent ? (
+              <Button className="bg-[#5AB9BF]">Подарки отправлены</Button>
+            ) : (
+              <Button onClick={handleGiftSending}>Отправить подарок</Button>
+            )}
             <ButtonLink
               className="bg-white border-[#FF6300] border-solid border-[3px] hover:bg-white text-[#FF6300]"
               link="/mygames"
